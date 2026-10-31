@@ -24,7 +24,7 @@ export function DrawerExamples() {
         Drawers
       </h2>
       <div className="flex flex-wrap gap-3">
-        <Drawer showSwipeHandle>
+        <Drawer>
           <DrawerTrigger render={<Button variant="outline" />}>
             Default drawer
           </DrawerTrigger>
@@ -38,8 +38,8 @@ export function DrawerExamples() {
               </DrawerHeader>
               <div className="min-h-0 flex-1 overflow-y-auto p-4">
                 <p className="text-sm text-muted-foreground">
-                  Focus stays inside this drawer. Close it with the button,
-                  Escape, or a swipe down from the handle.
+                  Focus stays inside this drawer. Close it with the button or
+                  Escape.
                 </p>
               </div>
               <DrawerFooter>
@@ -51,7 +51,7 @@ export function DrawerExamples() {
           </DrawerContent>
         </Drawer>
 
-        <Drawer showSwipeHandle>
+        <Drawer>
           <DrawerTrigger render={<Button variant="outline" />}>
             Nested drawers
           </DrawerTrigger>
@@ -75,7 +75,7 @@ export function DrawerExamples() {
                     onChange={(event) => setWorkspaceName(event.target.value)}
                   />
                 </Field>
-                <Drawer showSwipeHandle>
+                <Drawer>
                   <DrawerTrigger render={<Button variant="outline" />}>
                     Open nested drawer
                   </DrawerTrigger>
@@ -108,7 +108,7 @@ export function DrawerExamples() {
           </DrawerContent>
         </Drawer>
 
-        <Drawer modal={false} disablePointerDismissal swipeDirection="up">
+        <Drawer modal={false} disablePointerDismissal>
           <DrawerTrigger render={<Button variant="outline" />}>
             Non-modal drawer
           </DrawerTrigger>

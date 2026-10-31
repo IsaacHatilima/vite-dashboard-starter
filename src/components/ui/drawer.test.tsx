@@ -97,6 +97,7 @@ describe("shared Drawer", () => {
     const drawer = await screen.findByRole("dialog", {
       name: "Project details",
     })
+    expect(drawer).toHaveAttribute("data-swipe-direction", "right")
     expect(
       document.querySelector('[data-slot="drawer-overlay"]')
     ).not.toBeNull()
@@ -181,7 +182,7 @@ describe("shared Drawer", () => {
   it("preserves controlled opening and native direction props", async () => {
     const onOpenChange = vi.fn()
     const { rerender } = render(
-      <Drawer open onOpenChange={onOpenChange} swipeDirection="right">
+      <Drawer open onOpenChange={onOpenChange} swipeDirection="left">
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Inspector</DrawerTitle>
@@ -192,7 +193,7 @@ describe("shared Drawer", () => {
       </Drawer>
     )
     const drawer = await screen.findByRole("dialog", { name: "Inspector" })
-    expect(drawer).toHaveAttribute("data-swipe-direction", "right")
+    expect(drawer).toHaveAttribute("data-swipe-direction", "left")
     await userEvent.click(
       screen.getByRole("button", { name: "Close inspector" })
     )
@@ -200,7 +201,7 @@ describe("shared Drawer", () => {
     expect(drawer).toBeVisible()
 
     rerender(
-      <Drawer open={false} onOpenChange={onOpenChange} swipeDirection="right">
+      <Drawer open={false} onOpenChange={onOpenChange} swipeDirection="left">
         <DrawerContent>
           <DrawerTitle>Inspector</DrawerTitle>
         </DrawerContent>

@@ -266,7 +266,10 @@ to the parent:
 </Drawer>
 ```
 
-Import all `Drawer*` parts from `@/components/ui/drawer`. Directions use
+Import all `Drawer*` parts from `@/components/ui/drawer`. Drawers open from the
+right by default with an 8px inset, fully rounded border, and shadow, matching
+the referenced Rhea drawer frame. The nested and non-modal demos use the same
+surface. Override the direction with
 `swipeDirection="down" | "up" | "left" | "right"`. `showSwipeHandle` enables a
 handle; `snapPoints` enables vertical snap positions. Header/footer accept any
 React children. Put long content in a `min-h-0 flex-1 overflow-y-auto` region
