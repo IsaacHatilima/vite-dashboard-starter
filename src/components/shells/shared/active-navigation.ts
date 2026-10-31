@@ -1,7 +1,7 @@
 import { useLocation } from "react-router"
 
 import {
-  mainNavigation,
+  allNavigation,
   type NavItem,
   type NavSection,
 } from "@/config/navigation"
@@ -42,5 +42,5 @@ export function findActiveNavigation(
 
 export function useActiveNavigation(): ActiveNavigation {
   const { pathname } = useLocation()
-  return findActiveNavigation(pathname, mainNavigation)
+  return findActiveNavigation(pathname, allNavigation)
 }

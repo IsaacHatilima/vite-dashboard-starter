@@ -1,9 +1,23 @@
 import {
+  ArchiveIcon,
+  AtSignIcon,
+  ChartNoAxesCombinedIcon,
+  FileChartColumnIcon,
   FolderKanbanIcon,
+  KeyboardIcon,
+  KeyRoundIcon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
+  MailIcon,
+  PanelsTopLeftIcon,
   SendIcon,
   Settings2Icon,
+  ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  SmartphoneIcon,
+  UserCheckIcon,
+  UserPlusIcon,
+  UserRoundIcon,
   UsersIcon,
   type LucideIcon,
 } from "lucide-react"
@@ -13,6 +27,12 @@ import { routes } from "@/config/routes"
 export interface NavItem {
   title: string
   url: string
+  icon?: LucideIcon
+}
+
+export interface NavGroup {
+  title: string
+  items: NavItem[]
 }
 
 export interface NavSection {
@@ -21,6 +41,7 @@ export interface NavSection {
   url: string
   icon: LucideIcon
   items: NavItem[]
+  groups?: NavGroup[]
   // RailShell draws a divider above this section, as ChatGPT's rail does.
   dividerBefore?: boolean
 }
@@ -42,14 +63,17 @@ export const mainNavigation: NavSection[] = [
       {
         title: "Overview",
         url: routes.dashboard,
+        icon: LayoutDashboardIcon,
       },
       {
         title: "Analytics",
         url: routes.analytics,
+        icon: ChartNoAxesCombinedIcon,
       },
       {
         title: "Reports",
         url: routes.reports,
+        icon: FileChartColumnIcon,
       },
     ],
   },
@@ -61,10 +85,12 @@ export const mainNavigation: NavSection[] = [
       {
         title: "All projects",
         url: routes.projects,
+        icon: FolderKanbanIcon,
       },
       {
         title: "Archived",
         url: routes.archivedProjects,
+        icon: ArchiveIcon,
       },
     ],
   },
@@ -76,33 +102,74 @@ export const mainNavigation: NavSection[] = [
       {
         title: "Members",
         url: routes.team,
+        icon: UsersIcon,
       },
       {
         title: "Invitations",
         url: routes.invitations,
+        icon: UserPlusIcon,
+      },
+    ],
+  },
+]
+
+export const settingsNavigationGroups: NavGroup[] = [
+  {
+    title: "Notifications",
+    items: [
+      { title: "Email", url: routes.emailNotifications, icon: MailIcon },
+      { title: "Push", url: routes.pushNotifications, icon: SmartphoneIcon },
+      { title: "Mentions", url: routes.mentionNotifications, icon: AtSignIcon },
+      {
+        title: "Task assignments",
+        url: routes.taskNotifications,
+        icon: UserCheckIcon,
       },
     ],
   },
   {
-    title: "Settings",
-    url: routes.profile,
-    icon: Settings2Icon,
-    dividerBefore: true,
+    title: "Personal",
     items: [
+      { title: "Profile", url: routes.profile, icon: UserRoundIcon },
       {
-        title: "Profile",
-        url: routes.profile,
-      },
-      {
-        title: "Security",
-        url: routes.security,
-      },
-      {
-        title: "Appearance",
+        title: "Preferences",
         url: routes.appearance,
+        icon: SlidersHorizontalIcon,
+      },
+      {
+        title: "Keyboard shortcuts",
+        url: routes.keyboardShortcuts,
+        icon: KeyboardIcon,
       },
     ],
   },
+  {
+    title: "Security",
+    items: [
+      { title: "Password", url: routes.security, icon: KeyRoundIcon },
+      { title: "Sessions", url: routes.sessions, icon: PanelsTopLeftIcon },
+      {
+        title: "Two-factor authentication",
+        url: routes.twoFactorAuthentication,
+        icon: ShieldCheckIcon,
+      },
+    ],
+  },
+]
+
+export const settingsNavigation: NavSection = {
+  title: "Settings",
+  url: routes.profile,
+  icon: Settings2Icon,
+  groups: settingsNavigationGroups,
+  items: settingsNavigationGroups.flatMap((group) => group.items),
+}
+
+// Settings remains part of route metadata and search, but is entered through
+// the account menu rather than the app's primary navigation.
+export const allNavigation: NavSection[] = [
+  ...mainNavigation,
+  settingsNavigation,
 ]
 
 export const secondaryNavigation: NavLink[] = [

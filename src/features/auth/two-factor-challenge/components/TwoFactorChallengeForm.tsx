@@ -67,6 +67,7 @@ export function TwoFactorChallengeForm({
                 maxLength={TWO_FACTOR_CODE_LENGTH}
                 pattern={REGEXP_ONLY_DIGITS}
                 autoComplete="one-time-code"
+                inputMode="numeric"
                 autoFocus
               >
                 <InputOTPGroup>

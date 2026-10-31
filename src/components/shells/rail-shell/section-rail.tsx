@@ -19,6 +19,7 @@ interface SectionRailProps {
   collapsed: boolean
   onSelect: (section: NavSection) => void
   onHover: (section: NavSection) => void
+  onSettingsNavigate: () => void
 }
 
 // The outer column: one icon button per section. These never navigate; they
@@ -30,13 +31,14 @@ export function SectionRail({
   collapsed,
   onSelect,
   onHover,
+  onSettingsNavigate,
 }: SectionRailProps) {
   return (
     <div className="flex w-(--sidebar-width-icon) shrink-0 flex-col items-center py-2">
       <div
         role="group"
         aria-label="Sections"
-        className="flex min-h-0 flex-1 flex-col items-center gap-4"
+        className="flex min-h-0 flex-1 flex-col items-center gap-3"
       >
         {sections.map((section) => {
           const isSelected = section.title === selected.title
@@ -68,7 +70,7 @@ export function SectionRail({
                   {/* Filled once selected, as ChatGPT's are. */}
                   <section.icon
                     strokeWidth={ICON_STROKE_WIDTH}
-                    className={cn("size-5", isSelected && "fill-current")}
+                    className={cn("size-4", isSelected && "fill-current")}
                   />
                   <span className="sr-only">{section.title}</span>
                 </TooltipTrigger>
@@ -78,7 +80,7 @@ export function SectionRail({
           )
         })}
       </div>
-      <ShellUserMenu compact />
+      <ShellUserMenu compact onSettingsNavigate={onSettingsNavigate} />
     </div>
   )
 }

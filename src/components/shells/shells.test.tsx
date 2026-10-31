@@ -2,11 +2,18 @@ import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import type * as React from "react"
 import { createMemoryRouter, RouterProvider } from "react-router"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 
+import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { placeholderUser } from "@/config/app"
-import { ClassicShell, InsetShell, RailShell, type ShellProps } from "."
+import {
+  ClassicShell,
+  InsetShell,
+  RailShell,
+  WorkspaceShell,
+  type ShellProps,
+} from "."
 import { initials } from "./shared/shell-user-menu"
 
 function renderShell(Shell: React.ComponentType<ShellProps>, path: string) {
@@ -15,17 +22,25 @@ function renderShell(Shell: React.ComponentType<ShellProps>, path: string) {
     { initialEntries: [path] }
   )
   render(
-    <TooltipProvider>
-      <RouterProvider router={router} />
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" disableTransitionOnChange={false}>
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
+    </ThemeProvider>
   )
   return { router, user: userEvent.setup() }
 }
+
+afterEach(() => {
+  localStorage.clear()
+  document.documentElement.classList.remove("light", "dark")
+})
 
 const shells = [
   ["InsetShell", InsetShell],
   ["RailShell", RailShell],
   ["ClassicShell", ClassicShell],
+  ["WorkspaceShell", WorkspaceShell],
 ] as const
 
 describe.each(shells)("%s", (_, Shell) => {
@@ -66,6 +81,87 @@ describe.each(shells)("%s", (_, Shell) => {
     expect(
       screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
     ).toBeVisible()
+  })
+
+  it("opens settings from the account popup rather than app navigation", async () => {
+    const { router, user } = renderShell(Shell, "/dashboard")
+
+    expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
+    for (const name of ["Profile", "Password", "Preferences", "Sessions"]) {
+      expect(screen.queryByRole("link", { name })).toBeNull()
+    }
+
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
+    )
+    expect(
+      await screen.findByRole("menuitem", { name: "Profile" })
+    ).toBeVisible()
+    expect(screen.queryByRole("menuitem", { name: "Security" })).toBeNull()
+    await user.click(screen.getByRole("menuitem", { name: "Settings" }))
+
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe("/settings")
+    )
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull())
+  })
+
+  it("changes the theme from the account menu without closing it", async () => {
+    const { user } = renderShell(Shell, "/dashboard")
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
+    )
+
+    const light = await screen.findByRole("menuitemradio", { name: "Light" })
+    expect(screen.getAllByRole("menuitemradio")).toHaveLength(3)
+    const dark = screen.getByRole("menuitemradio", { name: "Dark" })
+    const system = screen.getByRole("menuitemradio", { name: "System" })
+    expect(light).toHaveAttribute("aria-checked", "true")
+
+    await user.click(dark)
+    expect(dark).toHaveAttribute("aria-checked", "true")
+    expect(light).toHaveAttribute("aria-checked", "false")
+    expect(document.documentElement).toHaveClass("dark")
+    expect(localStorage.getItem("theme")).toBe("dark")
+    expect(screen.getByRole("menu")).toBeVisible()
+
+    await user.click(light)
+    expect(light).toHaveAttribute("aria-checked", "true")
+    expect(document.documentElement).toHaveClass("light")
+    expect(localStorage.getItem("theme")).toBe("light")
+
+    await user.click(system)
+    expect(system).toHaveAttribute("aria-checked", "true")
+    expect(light).toHaveAttribute("aria-checked", "false")
+    // The default test media query resolves the system preference to light.
+    expect(document.documentElement).toHaveClass("light")
+    expect(localStorage.getItem("theme")).toBe("system")
+    expect(screen.getByRole("menu")).toBeVisible()
+  })
+
+  it("supports keyboard theme selection and returns focus on Escape", async () => {
+    const { user } = renderShell(Shell, "/dashboard")
+    const trigger = screen.getByRole("button", {
+      name: new RegExp(placeholderUser.name),
+    })
+    trigger.focus()
+    await user.keyboard("{Enter}")
+    await screen.findByRole("menuitemradio", { name: "Light" })
+
+    await user.keyboard("{Home}{ArrowDown}{ArrowDown}{ArrowDown}")
+    const dark = screen.getByRole("menuitemradio", { name: "Dark" })
+    await waitFor(() => expect(dark).toHaveFocus())
+    await user.keyboard("{Enter}")
+
+    expect(dark).toHaveAttribute("aria-checked", "true")
+    expect(document.documentElement).toHaveClass("dark")
+    expect(screen.getByRole("menu")).toBeVisible()
+
+    await user.keyboard("{Escape}")
+    await waitFor(() =>
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument()
+    )
+    await waitFor(() => expect(trigger).toHaveFocus())
   })
 })
 
@@ -121,10 +217,10 @@ describe("RailShell", () => {
     await waitFor(() =>
       expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible()
     )
-    expect(screen.getByRole("button", { name: "Settings" })).toHaveAttribute(
-      "aria-pressed",
-      "true"
-    )
+    expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
+    expect(
+      within(panel("Settings")).getByRole("link", { name: "Password" })
+    ).toHaveAttribute("aria-current", "page")
   })
 
   it("opens the account menu from the rail's avatar", async () => {
@@ -241,18 +337,69 @@ describe("RailShell", () => {
     const { user } = renderShell(RailShell, "/dashboard")
     await collapse(user)
 
-    await user.click(screen.getByRole("button", { name: "Settings" }))
+    await user.click(screen.getByRole("button", { name: "Projects" }))
     await user.click(
-      within(panel("Settings").closest("div.h-full")!).getByRole("button", {
+      within(panel("Projects").closest("div.h-full")!).getByRole("button", {
         name: "Toggle sidebar",
       })
     )
 
     expect(sidebarState()).toBe("expanded")
-    expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible()
+    expect(screen.getByRole("heading", { name: "Projects" })).toBeVisible()
+    expect(
+      screen.getAllByRole("navigation", { name: "Projects pages" })
+    ).toHaveLength(1)
+  })
+
+  it("opens Settings from the collapsed account popup and restores collapse focus", async () => {
+    const { router, user } = renderShell(RailShell, "/dashboard")
+    await collapse(user)
+    const account = screen.getByRole("button", {
+      name: `Account menu for ${placeholderUser.name}`,
+    })
+
+    await user.click(account)
+    await user.click(await screen.findByRole("menuitem", { name: "Settings" }))
+
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe("/settings")
+    )
+    expect(sidebarState()).toBe("expanded")
+    expect(panel("Settings")).toBeVisible()
     expect(
       screen.getAllByRole("navigation", { name: "Settings pages" })
     ).toHaveLength(1)
+    expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
+
+    await collapse(user)
+    await waitFor(() => expect(account).toHaveFocus())
+  })
+
+  it("reselects Settings from the popup even when the destination is unchanged", async () => {
+    const { router, user } = renderShell(RailShell, "/dashboard")
+    const account = screen.getByRole("button", {
+      name: `Account menu for ${placeholderUser.name}`,
+    })
+
+    await user.click(account)
+    await user.click(await screen.findByRole("menuitem", { name: "Settings" }))
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe("/settings")
+    )
+    expect(panel("Settings")).toBeVisible()
+
+    await user.click(screen.getByRole("button", { name: "Projects" }))
+    expect(panel("Projects")).toBeVisible()
+    expect(router.state.location.pathname).toBe("/settings")
+
+    await user.click(account)
+    await user.click(await screen.findByRole("menuitem", { name: "Settings" }))
+
+    expect(router.state.location.pathname).toBe("/settings")
+    expect(panel("Settings")).toBeVisible()
+    expect(
+      screen.queryByRole("navigation", { name: "Projects pages" })
+    ).toBeNull()
   })
 })
 

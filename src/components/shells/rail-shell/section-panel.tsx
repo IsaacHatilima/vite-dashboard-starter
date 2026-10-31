@@ -7,6 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -35,6 +36,7 @@ export function SectionPanel({
 }: SectionPanelProps) {
   const active = useActiveNavigation()
   const { open, toggleSidebar } = useSidebar()
+  const groups = section.groups ?? [{ title: null, items: section.items }]
 
   return (
     <div
@@ -43,15 +45,13 @@ export function SectionPanel({
         className
       )}
     >
-      <SidebarHeader className="flex-row items-center justify-between py-2 pr-2.5 pl-4">
-        <h2 className="truncate text-[17px] leading-6 font-semibold">
-          {section.title}
-        </h2>
+      <SidebarHeader className="h-(--app-header-height) flex-row items-center justify-between py-0 pr-2.5 pl-4">
+        <h2 className="truncate text-base font-semibold">{section.title}</h2>
         {/* aria-expanded reports the sidebar's state, so cancel the ghost
             button's open look: ChatGPT shows a bare icon until hovered. */}
         <Button
           variant="ghost"
-          size="icon-lg"
+          size="icon-sm"
           aria-label="Toggle sidebar"
           aria-expanded={open}
           className="rounded-md text-sidebar-muted-foreground aria-expanded:bg-transparent aria-expanded:text-sidebar-muted-foreground hover:aria-expanded:bg-muted hover:aria-expanded:text-foreground"
@@ -60,39 +60,57 @@ export function SectionPanel({
             toggleSidebar()
           }}
         >
-          <PanelLeftIcon strokeWidth={ICON_STROKE_WIDTH} className="size-5" />
+          <PanelLeftIcon strokeWidth={ICON_STROKE_WIDTH} className="size-4" />
         </Button>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="pt-0">
-          <SidebarGroupContent>
-            <nav aria-label={`${section.title} pages`}>
-              <SidebarMenu>
-                {section.items.map((item) => {
-                  const itemActive = active.item?.url === item.url
-                  return (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton
-                        isActive={itemActive}
-                        // ChatGPT marks the current page by its fill alone.
-                        className="h-9 data-active:font-normal"
-                        render={
-                          <Link
-                            to={item.url}
-                            aria-current={itemActive ? "page" : undefined}
-                            onClick={onNavigate}
-                          />
-                        }
-                      >
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </nav>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <nav
+          aria-label={`${section.title} pages`}
+          className="flex flex-col gap-3.5"
+        >
+          {groups.map((group) => (
+            <SidebarGroup
+              key={group.title ?? section.title}
+              className="px-2 py-0"
+            >
+              {group.title && (
+                <SidebarGroupLabel render={<h3 />}>
+                  {group.title}
+                </SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => {
+                    const itemActive = active.item?.url === item.url
+                    return (
+                      <SidebarMenuItem key={item.url}>
+                        <SidebarMenuButton
+                          isActive={itemActive}
+                          className={cn(section.groups && "[&_svg]:size-3.5")}
+                          render={
+                            <Link
+                              to={item.url}
+                              aria-current={itemActive ? "page" : undefined}
+                              onClick={onNavigate}
+                            />
+                          }
+                        >
+                          {item.icon && (
+                            <item.icon
+                              strokeWidth={ICON_STROKE_WIDTH}
+                              className="text-sidebar-muted-foreground"
+                            />
+                          )}
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </nav>
       </SidebarContent>
     </div>
   )

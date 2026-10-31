@@ -1,11 +1,15 @@
 import {
   ChevronsUpDownIcon,
   LogOutIcon,
-  ShieldCheckIcon,
+  MonitorIcon,
+  MoonIcon,
+  Settings2Icon,
+  SunIcon,
   UserIcon,
 } from "lucide-react"
 import { Link } from "react-router"
 
+import { useTheme } from "@/components/theme-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +18,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -23,8 +29,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { placeholderUser, type ShellUser } from "@/config/app"
 import { routes } from "@/config/routes"
+
+const themeOptions = [
+  { value: "light", label: "Light", icon: SunIcon },
+  { value: "dark", label: "Dark", icon: MoonIcon },
+  { value: "system", label: "System", icon: MonitorIcon },
+] as const
 
 export function initials(name: string): string {
   const letters = name
@@ -58,6 +75,7 @@ interface ShellUserMenuProps {
   // RailShell's icon rail only has room for the avatar: a round one in an
   // icon button, as ChatGPT's rail has.
   compact?: boolean
+  onSettingsNavigate?: () => void
 }
 
 function RailAvatar({ user }: { user: ShellUser }) {
@@ -69,13 +87,18 @@ function RailAvatar({ user }: { user: ShellUser }) {
   )
 }
 
-export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
+export function ShellUserMenu({
+  compact = false,
+  onSettingsNavigate,
+}: ShellUserMenuProps) {
   const { isMobile } = useSidebar()
+  const { theme, setTheme } = useTheme()
   const user = placeholderUser
 
   const menu = (
     <DropdownMenu>
       <DropdownMenuTrigger
+        data-account-menu-trigger=""
         render={
           compact ? (
             <Button
@@ -112,14 +135,45 @@ export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem render={<Link to={routes.profile} />}>
+          <DropdownMenuItem
+            render={<Link to={routes.profile} onClick={onSettingsNavigate} />}
+          >
             <UserIcon />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link to={routes.security} />}>
-            <ShieldCheckIcon />
-            Security
+          <DropdownMenuItem
+            render={<Link to={routes.settings} onClick={onSettingsNavigate} />}
+          >
+            <Settings2Icon />
+            Settings
           </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuRadioGroup
+            aria-label="Theme"
+            value={theme}
+            onValueChange={setTheme}
+            className="mx-1 my-1 flex gap-1 rounded-lg bg-muted p-1"
+          >
+            {themeOptions.map(({ value, label, icon: Icon }) => (
+              <Tooltip key={value}>
+                <TooltipTrigger
+                  render={
+                    <DropdownMenuRadioItem
+                      value={value}
+                      aria-label={label}
+                      label={label}
+                      className="h-(--control-height) flex-1 justify-center px-0 focus-visible:ring-2 focus-visible:ring-ring max-md:h-10 data-checked:bg-popover data-checked:shadow-xs [&>[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
+                    />
+                  }
+                >
+                  <Icon />
+                </TooltipTrigger>
+                <TooltipContent>{label}</TooltipContent>
+              </Tooltip>
+            ))}
+          </DropdownMenuRadioGroup>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

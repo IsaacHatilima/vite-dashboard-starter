@@ -35,26 +35,356 @@ put the request in each container's submit handler (scaffold it with
 `npx domain-driver --root src/features/auth make:action <screen>/User <action>`)
 and add route guards in `src/router.tsx`.
 
+## Typography and density
+
+The shared UI uses the measured Gr8r scale: locally bundled Geist/Geist Mono,
+13.5px body/navigation text, 12.5px controls, 11px group labels, compact desktop
+controls, and consistent shell gutters. Phone controls retain larger targets
+and 16px input text. Navigation icons identify individual pages and actions.
+
+The tokens live in `src/index.css`. Measurements, source assets, and deliberate
+adaptations are recorded in [the design notes](docs/design/gr8r-density.md).
+
+## Swapping the auth shell
+
+All seven auth screens share the same forms and can use any of these frames:
+
+| Shell              | Source                         | Layout                                                                 |
+| ------------------ | ------------------------------ | ---------------------------------------------------------------------- |
+| `SplitAuthShell`   | shadcn `login-02`              | Form column beside a full-height photo; photo hides on smaller screens |
+| `CardAuthShell`    | shadcn `login-03`              | Centered card with the brand above                                     |
+| `MinimalAuthShell` | shadcn `login-05`              | Centered unboxed form with an icon brand                               |
+| `PhotoAuthShell`   | Supplied Shadcnspace reference | Floating form surface over a full-page photo                           |
+
+Choose the frame with one import in `src/layouts/auth-layout.tsx`:
+
+```tsx
+import { SplitAuthShell as AuthShell } from "@/components/auth-shells"
+```
+
+`MinimalAuthShell` is active. Each shell accepts `children`; the shared `AuthCard`
+adapts its surface to the frame so forms do not end up inside nested cards.
+Typography, fields, buttons, focus states, and light/dark colors use the same
+components throughout. Replace `public/images/auth/workspace.jpg` to change
+the photo used by the split and photo frames.
+
+The two-factor screen uses the shared shadcn `InputOTP` from
+`src/components/ui/input-otp.tsx`. Each digit has its own rounded, bordered
+slot with a gap between slots. The standard input supports paste, numeric
+codes, and one-time-code autofill. The auth form uses six digits and keeps
+its recovery-code mode.
+
 ## Swapping the dashboard shell
 
-Every page after login renders inside a shell. There are three, all with the
+Every page after login renders inside a shell. There are four, all with the
 same props and all reading `src/config/navigation.ts`:
 
-| Shell          | shadcn block | Looks like                                                                                                    |
-| -------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
-| `InsetShell`   | `sidebar-08` | Page floats as a rounded inset panel; collapsible nav sections                                                |
-| `RailShell`    | `sidebar-09` | ChatGPT-style: icon rail picks a section (no navigation), panel lists its pages; collapse button in the panel |
-| `ClassicShell` | `sidebar-03` | Full-height sidebar with every section and its pages listed open                                              |
+| Shell            | shadcn block | Looks like                                                                                                            |
+| ---------------- | ------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `InsetShell`     | `sidebar-08` | Page floats as a rounded inset panel; collapsible nav sections                                                        |
+| `RailShell`      | `sidebar-09` | ChatGPT-style: icon rail picks a section (no navigation), panel lists its pages; collapse button in the panel         |
+| `ClassicShell`   | `sidebar-03` | Full-height sidebar with every section and its pages listed open                                                      |
+| `WorkspaceShell` | Custom       | Full navigation, top toolbar, inset page and a collapsible assistant panel, based on the supplied workspace reference |
 
 Change the one import in `src/layouts/dashboard-layout.tsx`:
 
 ```tsx
-import { RailShell as DashboardShell } from "@/components/shells"
+import { WorkspaceShell as DashboardShell } from "@/components/shells"
 ```
+
+`WorkspaceShell` is the active variant. Its toolbar searches the shared page
+navigation with Cmd/Ctrl+K. The assistant docks beside the page at 1280px and
+above; on smaller screens it opens as a drawer. The starter panel offers page
+shortcuts and a disabled composer: it has no assistant service connected.
+Replace its content through the optional `assistant` prop when integrating your
+own assistant or contextual tools:
+
+```tsx
+<WorkspaceShell assistant={<YourAssistant />}>
+  <Outlet />
+</WorkspaceShell>
+```
+
+Keep conversation and draft state above the shell if it should survive closing
+the panel or switching between its docked and drawer layouts.
 
 Add, rename or reorder nav items in `src/config/navigation.ts` and every shell
 picks them up. Add the matching route in `src/router.tsx`. The name and email
 in the user menu come from `placeholderUser` in `src/config/app.ts`.
+
+## Settings
+
+Open the user popup and choose **Settings** in any dashboard shell. **Profile**
+remains a direct shortcut; the theme controls and Log out stay in the popup.
+Settings no longer occupies the main app sidebar or RailShell's icon rail.
+
+`/settings` opens `/settings/profile`. Settings navigation has three groups:
+
+- Notifications: Email, Push, Mentions, and Task assignments.
+- Personal: Profile, Preferences, and Keyboard shortcuts.
+- Security: Password, Sessions, and Two-factor authentication.
+
+All options share a nested settings layout with icons and active-page states.
+WorkspaceShell, InsetShell, and ClassicShell insert that navigation beside the
+page content; it stacks above the content on smaller screens. RailShell reuses
+its existing section panel,
+so there is only one settings sidebar. Choosing Settings from its user popup
+also reopens a collapsed panel.
+
+Profile and password forms are previews with saving disabled until an account
+service is connected. Preferences uses the persistent app theme provider.
+The existing `/settings/security` and `/settings/appearance` links still open
+Password and Preferences. New destinations have placeholder pages.
+The shared navigation config keeps app sections in `mainNavigation`, settings
+groups in `settingsNavigationGroups`, flattened settings pages in
+`settingsNavigation`, and route metadata/search in `allNavigation`.
+
+## Inputs
+
+Use the shared `Input` from `@/components/ui/input`:
+
+```tsx
+<Input aria-label="Name" />
+<Input type="password" aria-label="Password" autoComplete="current-password" />
+<Input type="number" aria-label="Amount" />
+<Input type="email" aria-label="Email" autoComplete="email" />
+```
+
+Text is the default. Password inputs include a Show/Hide password control;
+visibility is independent for each field. The shared Input uses InputGroup
+for the icon action while retaining native input refs, autocomplete, and form values.
+Number inputs allow signed decimals and reject letters/exponent notation and
+invalid pasted or dropped text. They default to a decimal keyboard and
+`step="any"`; explicit `min`, `max`, `step`, and `inputMode` props still apply.
+
+Email inputs allow partial typing and use native email-format validation.
+Use `required` to reject an empty address. Native validation is available via
+`checkValidity()` and on normal form submission; forms using `noValidate`
+(including the starter's auth demos) intentionally skip submission validation.
+Other native input types, refs, events, and controlled/uncontrolled props remain
+available.
+
+## Cards
+
+`Card` keeps its standard shadcn composition and accepts `border`, which defaults
+to `true`. Use `<Card border={false}>` to remove its outer outline.
+
+`StackedCard` adds a muted backing surface with composable sections. Enable its
+header with `top`, its footer with `bottom`, or both. Both flags default to
+`false`; disabled sections render nothing. `StackHeader` and `StackFooter`
+accept any React children, including buttons and inputs. `StackContent` is the
+raised inner Card, with flush edges and a soft shadow over the backing surface.
+It defaults to `border={false}`; pass `border` to add the standard Card outline.
+It accepts the standard Card props and parts:
+
+```tsx
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import {
+  StackedCard,
+  StackHeader,
+  StackContent,
+  StackFooter,
+} from "@/components/ui/stacked-card"
+
+;<StackedCard top bottom>
+  <StackHeader>Sales trend</StackHeader>
+  <StackContent>
+    <CardHeader>
+      <CardTitle>Revenue</CardTitle>
+    </CardHeader>
+    <CardContent>Your chart or other content</CardContent>
+  </StackContent>
+  <StackFooter>
+    <span>Monthly overview</span>
+    <Button size="sm">Export</Button>
+  </StackFooter>
+</StackedCard>
+```
+
+Normal div attributes, refs, and `className` apply to the outer frame and bands.
+Place siblings in a stretching grid (`grid auto-rows-fr items-stretch`) to give
+them equal overall heights. `StackContent` expands into the space left when a
+header or footer is absent. The dashboard shows all three combinations with
+working controls in both themes.
+
+## Dialogs
+
+Dialog behavior lives in `src/components/ui/dialog.tsx`, alongside Card and
+StackedCard. Compose the shared parts anywhere in the app:
+
+```tsx
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+
+;<Dialog stack>
+  <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Project details</DialogTitle>
+      <DialogDescription>
+        Review the project and its settings.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogBody>Your content, inputs, or other components</DialogBody>
+    <DialogFooter>
+      <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+`stack` defaults to `false`. Enable it on `Dialog` for a layered edge, or use
+`stack={false}` for the standard surface. `DialogContent` also accepts an
+explicit `stack` override for existing usage.
+
+`DialogContent` stays within the viewport. `DialogBody` scrolls while
+`DialogHeader` and `DialogFooter` stay visible; each accepts arbitrary React
+children. Escape and Close restore trigger focus. The overlay dims the page
+without blur. The dashboard composes these same parts as a workspace-guide
+example; there is no feature-specific dialog wrapper.
+
+## Commands
+
+The shared shadcn command components live in `src/components/ui/command.tsx`.
+`CommandDialog` accepts `stack`, which defaults to `false` and uses the same
+layered edge as `Dialog` and `Drawer`:
+
+```tsx
+<CommandDialog open={open} onOpenChange={setOpen} stack>
+  <Command>
+    <CommandInput placeholder="Search commands…" />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup heading="Pages">
+        <CommandItem onSelect={openProjects}>Projects</CommandItem>
+      </CommandGroup>
+    </CommandList>
+  </Command>
+</CommandDialog>
+```
+
+Review **Default command** and **Stacked command** under **Commands** on the
+dashboard. Both support filtering, arrow-key selection, and navigation.
+
+## Drawers
+
+To review the examples, open `/dashboard` and scroll to **Drawers**. The
+**Default drawer**, **Stacked drawer**, **Nested drawers**, and **Non-modal drawer**
+buttons open interactive demos of each mode.
+
+The shared Base UI drawer is installed at `src/components/ui/drawer.tsx`.
+It uses the app's clear, dimmed overlay and supports the native shadcn/Base UI
+props, plus the shared `stack` option:
+
+```tsx
+<Drawer>...</Drawer>                                      // modal by default
+<Drawer stack>...</Drawer>                                // layered edge, like Dialog
+<Drawer modal={false}>...</Drawer>                        // background stays interactive
+<Drawer modal={false} disablePointerDismissal>...</Drawer> // stays open on outside presses
+```
+
+`stack` defaults to `false`. Enable it on `Drawer` for the same layered edge as
+`Dialog stack`. `DrawerContent` accepts an explicit `stack` override as well.
+Try **Stacked drawer** on the dashboard to preview it.
+
+Nesting is detected automatically. Place another `Drawer` inside the parent's
+`DrawerContent`; opening it stacks the parent behind it, and closing it returns
+to the parent:
+
+```tsx
+<Drawer>
+  <DrawerTrigger render={<Button />}>Open parent</DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Parent drawer</DrawerTitle>
+      <DrawerDescription>Choose an item to see its details.</DrawerDescription>
+    </DrawerHeader>
+    <div className="p-4">
+      <Drawer>
+        <DrawerTrigger render={<Button />}>Open child</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Child drawer</DrawerTitle>
+            <DrawerDescription>Item details and actions.</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <DrawerClose render={<Button variant="outline" />}>
+              Back
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
+    <DrawerFooter>
+      <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+Import all `Drawer*` parts from `@/components/ui/drawer`. Drawers open from the
+right by default with an 8px inset, fully rounded border, and shadow, matching
+the referenced Rhea drawer frame. The nested and non-modal demos use the same
+surface. Override the direction with
+`swipeDirection="down" | "up" | "left" | "right"`. `showSwipeHandle` enables a
+handle; `snapPoints` enables vertical snap positions. Header/footer accept any
+React children. Put long content in a `min-h-0 flex-1 overflow-y-auto` region
+between them to keep actions visible. The body is positioned for the documented
+iOS Safari overlay behavior.
+
+## Sheets
+
+Open `/dashboard` and scroll to **Sheets**. **Normal sheet** traps focus and
+blocks the page with a dim overlay; **Non-modal sheet** has no overlay and keeps
+the page interactive. Both open from the right. The non-modal panel matches the
+Gr8r task sheet: full height, flush to the edge, a subtle left border and shadow,
+and a 620px width that fits smaller viewports.
+
+```tsx
+<Sheet modal={false} disablePointerDismissal>
+  <SheetTrigger render={<Button />}>Open right sheet</SheetTrigger>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>Sheet preview</SheetTitle>
+      <SheetDescription>The page remains interactive.</SheetDescription>
+    </SheetHeader>
+    <div className="min-h-0 flex-1 overflow-y-auto p-4">Your content</div>
+    <SheetFooter>
+      <SheetClose render={<Button variant="outline" />}>Close sheet</SheetClose>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>
+```
+
+Import the `Sheet*` parts from `@/components/ui/sheet`. `side="right"` is the
+content default. `modal={false}` omits the overlay and allows background focus,
+scrolling, and clicks.
+`disablePointerDismissal` keeps the sheet open during outside interactions.
+Sheet stays modal by default for existing mobile navigation and assistant usage.
+Modal sheet overlays use the shared theme dimming without blur.
+
+## Toasts
+
+The shared Sonner `Toaster` is mounted once in `App`, uses the current app theme,
+and displays toasts at the bottom centre across all auth and dashboard shells.
+Trigger a toast from any component:
+
+```tsx
+import { toast } from "sonner"
+
+toast.success("Changes saved")
+```
 
 ## Adding features
 
