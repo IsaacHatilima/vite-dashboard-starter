@@ -18,6 +18,7 @@
   --color-sidebar-muted-foreground: var(--sidebar-muted-foreground);
   --color-sidebar: var(--sidebar);
   --color-sidebar-panel: var(--sidebar-panel);
+  --color-sidebar-panel-floating: var(--sidebar-panel-floating);
   --color-sidebar-rail: var(--sidebar-rail);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
@@ -81,6 +82,7 @@
   --radius: 0.625rem;
   --sidebar: var(--background);
   --sidebar-panel: var(--background);
+  --sidebar-panel-floating: var(--background);
   --sidebar-rail: #f9f9f9;
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
@@ -123,6 +125,7 @@
   --chart-5: oklch(0.269 0 0);
   --sidebar: #000000;
   --sidebar-panel: var(--background);
+  --sidebar-panel-floating: var(--popover);
   --sidebar-rail: var(--sidebar);
   --sidebar-foreground: rgb(237 237 237 / 85%);
   --sidebar-muted-foreground: #afafaf;

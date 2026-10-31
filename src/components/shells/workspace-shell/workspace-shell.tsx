@@ -130,7 +130,7 @@ export function WorkspaceShell({ children, assistant }: WorkspaceShellProps) {
           <SheetContent
             id="workspace-assistant"
             side="right"
-            className="max-w-sm gap-0 data-[side=right]:w-[calc(100%-1rem)]"
+            className="max-w-sm gap-0 bg-sidebar-panel-floating data-[side=right]:w-[calc(100%-1rem)]"
           >
             <SheetHeader className="pr-12">
               <SheetTitle>Workspace assistant</SheetTitle>
