@@ -115,6 +115,19 @@ them equal overall heights. `StackContent` expands into the space left when a
 header or footer is absent. The dashboard shows all three combinations with
 working controls in both themes.
 
+## Dialogs
+
+The dashboard includes a `StickyFooterDialog` example using the existing shadcn
+Dialog parts and the documented [sticky-footer pattern](https://ui.shadcn.com/docs/components/base/dialog#sticky-footer).
+Only the content region scrolls; the header, close control, and footer remain
+visible inside a popup bounded to the viewport. Escape and the footer's Close
+button dismiss it and return focus to the trigger.
+
+When composing another dialog, put `overflow-y-auto` and a maximum height on the
+body region, with `min-h-0` inside a height-constrained flex column. Keep
+`DialogHeader` and `DialogFooter` as non-scrolling siblings. The shared Dialog
+primitive is unchanged, so other dialogs can still use their own layouts.
+
 ## Adding features
 
 Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver); see

@@ -18,6 +18,7 @@ import {
   StackHeader,
 } from "@/components/ui/stacked-card"
 import { routes } from "@/config/routes"
+import { StickyFooterDialog } from "./StickyFooterDialog"
 
 interface DashboardOverviewProps {
   userName: string
@@ -168,6 +169,14 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
               </Button>
             </StackFooter>
           </StackedCard>
+        </div>
+      </section>
+      <section aria-labelledby="dialogs-title" className="flex flex-col gap-4">
+        <h2 id="dialogs-title" className="text-sm font-medium">
+          Dialogs
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          <StickyFooterDialog />
         </div>
       </section>
     </>
