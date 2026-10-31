@@ -108,17 +108,26 @@ Open the user popup and choose **Settings** in any dashboard shell. **Profile**
 remains a direct shortcut; the theme controls and Log out stay in the popup.
 Settings no longer occupies the main app sidebar or RailShell's icon rail.
 
-`/settings` opens `/settings/profile`. Profile, Security, and Appearance share
-a nested settings layout and navigation. WorkspaceShell, InsetShell, and
-ClassicShell insert that navigation beside the page content; it stacks above
-the content on smaller screens. RailShell reuses its existing section panel,
+`/settings` opens `/settings/profile`. Settings navigation has three groups:
+
+- Notifications: Email, Push, Mentions, and Task assignments.
+- Personal: Profile, Preferences, and Keyboard shortcuts.
+- Security: Password, Sessions, and Two-factor authentication.
+
+All options share a nested settings layout with icons and active-page states.
+WorkspaceShell, InsetShell, and ClassicShell insert that navigation beside the
+page content; it stacks above the content on smaller screens. RailShell reuses
+its existing section panel,
 so there is only one settings sidebar. Choosing Settings from its user popup
 also reopens a collapsed panel.
 
 Profile and password forms are previews with saving disabled until an account
-service is connected. Appearance uses the persistent app theme provider.
+service is connected. Preferences uses the persistent app theme provider.
+The existing `/settings/security` and `/settings/appearance` links still open
+Password and Preferences. New destinations have placeholder pages.
 The shared navigation config keeps app sections in `mainNavigation`, settings
-pages in `settingsNavigation`, and route metadata/search in `allNavigation`.
+groups in `settingsNavigationGroups`, flattened settings pages in
+`settingsNavigation`, and route metadata/search in `allNavigation`.
 
 ## Inputs
 

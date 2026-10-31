@@ -18,6 +18,13 @@ export const routes = {
   profile: "/settings/profile",
   security: "/settings/security",
   appearance: "/settings/appearance",
+  emailNotifications: "/settings/notifications/email",
+  pushNotifications: "/settings/notifications/push",
+  mentionNotifications: "/settings/notifications/mentions",
+  taskNotifications: "/settings/notifications/task-assignments",
+  keyboardShortcuts: "/settings/keyboard-shortcuts",
+  sessions: "/settings/sessions",
+  twoFactorAuthentication: "/settings/two-factor-authentication",
 } as const
 
 // Query parameter that carries the page to continue to after confirming the

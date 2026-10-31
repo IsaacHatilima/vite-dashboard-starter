@@ -7,6 +7,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -35,6 +36,7 @@ export function SectionPanel({
 }: SectionPanelProps) {
   const active = useActiveNavigation()
   const { open, toggleSidebar } = useSidebar()
+  const groups = section.groups ?? [{ title: null, items: section.items }]
 
   return (
     <div
@@ -64,35 +66,58 @@ export function SectionPanel({
         </Button>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="pt-0">
-          <SidebarGroupContent>
-            <nav aria-label={`${section.title} pages`}>
-              <SidebarMenu>
-                {section.items.map((item) => {
-                  const itemActive = active.item?.url === item.url
-                  return (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton
-                        isActive={itemActive}
-                        // ChatGPT marks the current page by its fill alone.
-                        className="h-9 data-active:font-normal"
-                        render={
-                          <Link
-                            to={item.url}
-                            aria-current={itemActive ? "page" : undefined}
-                            onClick={onNavigate}
-                          />
-                        }
-                      >
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </nav>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <nav
+          aria-label={`${section.title} pages`}
+          className="flex flex-col gap-1"
+        >
+          {groups.map((group) => (
+            <SidebarGroup key={group.title ?? section.title} className="pt-0">
+              {group.title && (
+                <SidebarGroupLabel
+                  render={<h3 />}
+                  className="h-7 text-[11px] font-medium tracking-wider text-sidebar-muted-foreground uppercase"
+                >
+                  {group.title}
+                </SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu className={cn(section.groups && "gap-0.5")}>
+                  {group.items.map((item) => {
+                    const itemActive = active.item?.url === item.url
+                    return (
+                      <SidebarMenuItem key={item.url}>
+                        <SidebarMenuButton
+                          isActive={itemActive}
+                          // ChatGPT marks the current page by its fill alone.
+                          className={cn(
+                            "h-9 data-active:font-normal",
+                            section.groups &&
+                              "h-auto min-h-10 py-1.5 text-[13px] md:min-h-8"
+                          )}
+                          render={
+                            <Link
+                              to={item.url}
+                              aria-current={itemActive ? "page" : undefined}
+                              onClick={onNavigate}
+                            />
+                          }
+                        >
+                          {item.icon && (
+                            <item.icon
+                              strokeWidth={ICON_STROKE_WIDTH}
+                              className="text-sidebar-muted-foreground"
+                            />
+                          )}
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    )
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </nav>
       </SidebarContent>
     </div>
   )

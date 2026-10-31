@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input"
 export default function SecuritySettings() {
   return (
     <section className="flex w-full max-w-2xl flex-col gap-6">
-      <PageTitle title="Security" />
-      <h1 className="sr-only">Security</h1>
+      <PageTitle title="Password" />
+      <h1 className="sr-only">Password</h1>
       <form onSubmit={(event) => event.preventDefault()}>
         <Card>
           <CardHeader>

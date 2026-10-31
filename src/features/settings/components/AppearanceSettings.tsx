@@ -43,8 +43,8 @@ export default function AppearanceSettings() {
 
   return (
     <section className="flex w-full max-w-2xl flex-col gap-6">
-      <PageTitle title="Appearance" />
-      <h1 className="sr-only">Appearance</h1>
+      <PageTitle title="Preferences" />
+      <h1 className="sr-only">Preferences</h1>
       <Card>
         <CardHeader>
           <CardTitle>Theme</CardTitle>

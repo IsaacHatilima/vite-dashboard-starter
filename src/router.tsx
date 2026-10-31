@@ -85,6 +85,34 @@ export const appRoutes: RouteObject[] = [
               { path: routes.profile, element: <ProfileSettings /> },
               { path: routes.security, element: <SecuritySettings /> },
               { path: routes.appearance, element: <AppearanceSettings /> },
+              {
+                path: routes.emailNotifications,
+                element: <PlaceholderPage title="Email" />,
+              },
+              {
+                path: routes.pushNotifications,
+                element: <PlaceholderPage title="Push" />,
+              },
+              {
+                path: routes.mentionNotifications,
+                element: <PlaceholderPage title="Mentions" />,
+              },
+              {
+                path: routes.taskNotifications,
+                element: <PlaceholderPage title="Task assignments" />,
+              },
+              {
+                path: routes.keyboardShortcuts,
+                element: <PlaceholderPage title="Keyboard shortcuts" />,
+              },
+              {
+                path: routes.sessions,
+                element: <PlaceholderPage title="Sessions" />,
+              },
+              {
+                path: routes.twoFactorAuthentication,
+                element: <PlaceholderPage title="Two-factor authentication" />,
+              },
             ],
           },
           { path: "*", element: <NotFoundPage /> },

@@ -63,10 +63,18 @@ describe("WorkspaceShell page search", () => {
 
     await user.clear(input)
     await user.type(input, "settings")
-    expect(within(dialog).getAllByRole("link")).toHaveLength(3)
+    expect(within(dialog).getAllByRole("link")).toHaveLength(10)
     expect(
-      within(dialog).getByRole("link", { name: /Appearance\s*Settings/ })
+      within(dialog).getByRole("link", { name: /Preferences\s*Settings/ })
     ).toBeVisible()
+    expect(
+      within(dialog).getByRole("link", {
+        name: /Keyboard shortcuts\s*Settings/,
+      })
+    ).toHaveAttribute("href", "/settings/keyboard-shortcuts")
+    expect(
+      within(dialog).getByRole("link", { name: /Task assignments\s*Settings/ })
+    ).toHaveAttribute("href", "/settings/notifications/task-assignments")
 
     await user.clear(input)
     await user.type(input, "no-such-page")

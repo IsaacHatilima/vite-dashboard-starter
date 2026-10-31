@@ -87,7 +87,7 @@ describe.each(shells)("%s", (_, Shell) => {
     const { router, user } = renderShell(Shell, "/dashboard")
 
     expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
-    for (const name of ["Profile", "Security", "Appearance"]) {
+    for (const name of ["Profile", "Password", "Preferences", "Sessions"]) {
       expect(screen.queryByRole("link", { name })).toBeNull()
     }
 
@@ -219,7 +219,7 @@ describe("RailShell", () => {
     )
     expect(screen.queryByRole("button", { name: "Settings" })).toBeNull()
     expect(
-      within(panel("Settings")).getByRole("link", { name: "Security" })
+      within(panel("Settings")).getByRole("link", { name: "Password" })
     ).toHaveAttribute("aria-current", "page")
   })
 

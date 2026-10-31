@@ -67,25 +67,38 @@ const shells = [
   ["RailShell", RailShell],
 ] as const
 
+const settingsDestinations = [
+  ["Email", "/settings/notifications/email"],
+  ["Push", "/settings/notifications/push"],
+  ["Mentions", "/settings/notifications/mentions"],
+  ["Task assignments", "/settings/notifications/task-assignments"],
+  ["Profile", "/settings/profile"],
+  ["Preferences", "/settings/appearance"],
+  ["Keyboard shortcuts", "/settings/keyboard-shortcuts"],
+  ["Password", "/settings/security"],
+  ["Sessions", "/settings/sessions"],
+  ["Two-factor authentication", "/settings/two-factor-authentication"],
+] as const
+
 describe.each(shells)("%s settings", (_, Shell) => {
   it("marks the current settings page with a trailing slash", async () => {
     renderSettings(Shell, "/settings/security/")
 
     expect(
-      await screen.findByRole("heading", { name: "Security", level: 1 })
+      await screen.findByRole("heading", { name: "Password", level: 1 })
     ).toBeVisible()
     const navigation = screen.getByRole("navigation", {
       name: "Settings pages",
     })
     expect(
       within(navigation).getByRole("link", {
-        name: "Security",
+        name: "Password",
         current: "page",
       })
     ).toBeVisible()
   })
 
-  it("uses one settings navigation across the three pages entered from the popup", async () => {
+  it("uses one grouped settings navigation across all destinations entered from the popup", async () => {
     const { router, user } = renderSettings(Shell)
     await user.click(
       screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
@@ -105,15 +118,19 @@ describe.each(shells)("%s settings", (_, Shell) => {
     const navigation = screen.getByRole("navigation", {
       name: "Settings pages",
     })
+    for (const group of ["Notifications", "Personal", "Security"]) {
+      expect(within(navigation).getByText(group)).toBeVisible()
+    }
+    expect(
+      within(navigation)
+        .getAllByRole("link")
+        .map((link) => link.textContent)
+    ).toEqual(settingsDestinations.map(([title]) => title))
     expect(
       within(navigation).getByRole("link", { name: "Profile", current: "page" })
     ).toBeVisible()
 
-    for (const [title, path] of [
-      ["Security", "/settings/security"],
-      ["Appearance", "/settings/appearance"],
-      ["Profile", "/settings/profile"],
-    ]) {
+    for (const [title, path] of settingsDestinations) {
       await user.click(within(navigation).getByRole("link", { name: title }))
       await waitFor(() => expect(router.state.location.pathname).toBe(path))
 
