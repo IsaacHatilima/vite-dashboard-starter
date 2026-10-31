@@ -83,26 +83,24 @@ export const mainNavigation: NavSection[] = [
       },
     ],
   },
-  {
-    title: "Settings",
-    url: routes.profile,
-    icon: Settings2Icon,
-    dividerBefore: true,
-    items: [
-      {
-        title: "Profile",
-        url: routes.profile,
-      },
-      {
-        title: "Security",
-        url: routes.security,
-      },
-      {
-        title: "Appearance",
-        url: routes.appearance,
-      },
-    ],
-  },
+]
+
+export const settingsNavigation: NavSection = {
+  title: "Settings",
+  url: routes.profile,
+  icon: Settings2Icon,
+  items: [
+    { title: "Profile", url: routes.profile },
+    { title: "Security", url: routes.security },
+    { title: "Appearance", url: routes.appearance },
+  ],
+}
+
+// Settings remains part of route metadata and search, but is entered through
+// the account menu rather than the app's primary navigation.
+export const allNavigation: NavSection[] = [
+  ...mainNavigation,
+  settingsNavigation,
 ]
 
 export const secondaryNavigation: NavLink[] = [

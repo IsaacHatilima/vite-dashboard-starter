@@ -3,7 +3,7 @@ import {
   LogOutIcon,
   MonitorIcon,
   MoonIcon,
-  ShieldCheckIcon,
+  Settings2Icon,
   SunIcon,
   UserIcon,
 } from "lucide-react"
@@ -75,6 +75,7 @@ interface ShellUserMenuProps {
   // RailShell's icon rail only has room for the avatar: a round one in an
   // icon button, as ChatGPT's rail has.
   compact?: boolean
+  onSettingsNavigate?: () => void
 }
 
 function RailAvatar({ user }: { user: ShellUser }) {
@@ -86,7 +87,10 @@ function RailAvatar({ user }: { user: ShellUser }) {
   )
 }
 
-export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
+export function ShellUserMenu({
+  compact = false,
+  onSettingsNavigate,
+}: ShellUserMenuProps) {
   const { isMobile } = useSidebar()
   const { theme, setTheme } = useTheme()
   const user = placeholderUser
@@ -94,6 +98,7 @@ export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
   const menu = (
     <DropdownMenu>
       <DropdownMenuTrigger
+        data-account-menu-trigger=""
         render={
           compact ? (
             <Button
@@ -130,13 +135,17 @@ export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem render={<Link to={routes.profile} />}>
+          <DropdownMenuItem
+            render={<Link to={routes.profile} onClick={onSettingsNavigate} />}
+          >
             <UserIcon />
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link to={routes.security} />}>
-            <ShieldCheckIcon />
-            Security
+          <DropdownMenuItem
+            render={<Link to={routes.settings} onClick={onSettingsNavigate} />}
+          >
+            <Settings2Icon />
+            Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

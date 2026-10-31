@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { mainNavigation } from "@/config/navigation"
+import { allNavigation, mainNavigation } from "@/config/navigation"
 import { findActiveNavigation } from "./active-navigation"
 
 function titlesFor(pathname: string) {
-  const { section, item } = findActiveNavigation(pathname, mainNavigation)
+  const { section, item } = findActiveNavigation(pathname, allNavigation)
   return [section?.title ?? null, item?.title ?? null]
 }
 
@@ -25,6 +25,16 @@ describe("findActiveNavigation", () => {
 
   it("ignores a trailing slash", () => {
     expect(titlesFor("/settings/security/")).toEqual(["Settings", "Security"])
+  })
+
+  it("keeps settings metadata outside the main app navigation", () => {
+    expect(mainNavigation.some((section) => section.title === "Settings")).toBe(
+      false
+    )
+    expect(titlesFor("/settings/appearance")).toEqual([
+      "Settings",
+      "Appearance",
+    ])
   })
 
   it("does not match on a shared prefix that isn't a path segment", () => {

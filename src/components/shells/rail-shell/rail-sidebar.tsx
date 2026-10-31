@@ -2,7 +2,11 @@ import { useRef, useState } from "react"
 import type * as React from "react"
 
 import { Sidebar, useSidebar } from "@/components/ui/sidebar"
-import { mainNavigation, type NavSection } from "@/config/navigation"
+import {
+  mainNavigation,
+  settingsNavigation,
+  type NavSection,
+} from "@/config/navigation"
 import { useActiveNavigation } from "../shared/active-navigation"
 import { useCloseMobileSidebarOnNavigate } from "../shared/sidebar-state"
 import { SectionPanel } from "./section-panel"
@@ -15,7 +19,7 @@ import { useRailPeek } from "./use-rail-peek"
 //    panel as a card over the page; its toggle docks it again.
 export function RailSidebar() {
   useCloseMobileSidebarOnNavigate()
-  const { open, isMobile } = useSidebar()
+  const { open, setOpen, isMobile, setOpenMobile } = useSidebar()
   // Phones use a drawer, which has no collapsed state.
   const collapsed = !open && !isMobile
   const rowRef = useRef<HTMLDivElement>(null)
@@ -40,11 +44,14 @@ export function RailSidebar() {
   const peekSection = collapsed ? peek.section : null
 
   function focusRailButton(section: NavSection) {
-    rowRef.current
-      ?.querySelector<HTMLButtonElement>(
+    const button =
+      rowRef.current?.querySelector<HTMLButtonElement>(
         `[data-section="${CSS.escape(section.title)}"]`
+      ) ??
+      rowRef.current?.querySelector<HTMLButtonElement>(
+        "[data-account-menu-trigger]"
       )
-      ?.focus()
+    button?.focus()
   }
 
   function handleKeyDown(event: React.KeyboardEvent) {
@@ -87,6 +94,15 @@ export function RailSidebar() {
             selected={selected}
             peeked={peekSection}
             collapsed={collapsed}
+            onSettingsNavigate={() => {
+              setSelected(settingsNavigation)
+              peek.close()
+              if (isMobile) {
+                setOpenMobile(false)
+              } else {
+                setOpen(true)
+              }
+            }}
             onSelect={(section) => {
               setSelected(section)
               if (collapsed) {

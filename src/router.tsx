@@ -9,6 +9,10 @@ import ResetPasswordContainer from "@/features/auth/reset-password/containers/Re
 import TwoFactorChallengeContainer from "@/features/auth/two-factor-challenge/containers/TwoFactorChallengeContainer"
 import VerifyEmailContainer from "@/features/auth/verify-email/containers/VerifyEmailContainer"
 import DashboardContainer from "@/features/dashboard/containers/DashboardContainer"
+import AppearanceSettings from "@/features/settings/components/AppearanceSettings"
+import ProfileSettings from "@/features/settings/components/ProfileSettings"
+import SecuritySettings from "@/features/settings/components/SecuritySettings"
+import SettingsContainer from "@/features/settings/containers/SettingsContainer"
 import { AuthLayout } from "@/layouts/auth-layout"
 import { DashboardLayout } from "@/layouts/dashboard-layout"
 import { RootLayout } from "@/layouts/root-layout"
@@ -72,19 +76,16 @@ export const appRoutes: RouteObject[] = [
           },
           {
             path: routes.settings,
-            element: <Navigate to={routes.profile} replace />,
-          },
-          {
-            path: routes.profile,
-            element: <PlaceholderPage title="Profile" />,
-          },
-          {
-            path: routes.security,
-            element: <PlaceholderPage title="Security" />,
-          },
-          {
-            path: routes.appearance,
-            element: <PlaceholderPage title="Appearance" />,
+            element: <SettingsContainer />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to={routes.profile} replace />,
+              },
+              { path: routes.profile, element: <ProfileSettings /> },
+              { path: routes.security, element: <SecuritySettings /> },
+              { path: routes.appearance, element: <AppearanceSettings /> },
+            ],
           },
           { path: "*", element: <NotFoundPage /> },
         ],

@@ -52,7 +52,7 @@ Choose the frame with one import in `src/layouts/auth-layout.tsx`:
 import { SplitAuthShell as AuthShell } from "@/components/auth-shells"
 ```
 
-`SplitAuthShell` is active. Each shell accepts `children`; the shared `AuthCard`
+`MinimalAuthShell` is active. Each shell accepts `children`; the shared `AuthCard`
 adapts its surface to the frame so forms do not end up inside nested cards.
 Typography, fields, buttons, focus states, and light/dark colors use the same
 components throughout. Replace `public/images/auth/workspace.jpg` to change
@@ -101,6 +101,24 @@ the panel or switching between its docked and drawer layouts.
 Add, rename or reorder nav items in `src/config/navigation.ts` and every shell
 picks them up. Add the matching route in `src/router.tsx`. The name and email
 in the user menu come from `placeholderUser` in `src/config/app.ts`.
+
+## Settings
+
+Open the user popup and choose **Settings** in any dashboard shell. **Profile**
+remains a direct shortcut; the theme controls and Log out stay in the popup.
+Settings no longer occupies the main app sidebar or RailShell's icon rail.
+
+`/settings` opens `/settings/profile`. Profile, Security, and Appearance share
+a nested settings layout and navigation. WorkspaceShell, InsetShell, and
+ClassicShell insert that navigation beside the page content; it stacks above
+the content on smaller screens. RailShell reuses its existing section panel,
+so there is only one settings sidebar. Choosing Settings from its user popup
+also reopens a collapsed panel.
+
+Profile and password forms are previews with saving disabled until an account
+service is connected. Appearance uses the persistent app theme provider.
+The shared navigation config keeps app sections in `mainNavigation`, settings
+pages in `settingsNavigation`, and route metadata/search in `allNavigation`.
 
 ## Inputs
 

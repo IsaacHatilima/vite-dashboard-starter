@@ -19,6 +19,7 @@ interface SectionRailProps {
   collapsed: boolean
   onSelect: (section: NavSection) => void
   onHover: (section: NavSection) => void
+  onSettingsNavigate: () => void
 }
 
 // The outer column: one icon button per section. These never navigate; they
@@ -30,6 +31,7 @@ export function SectionRail({
   collapsed,
   onSelect,
   onHover,
+  onSettingsNavigate,
 }: SectionRailProps) {
   return (
     <div className="flex w-(--sidebar-width-icon) shrink-0 flex-col items-center py-2">
@@ -78,7 +80,7 @@ export function SectionRail({
           )
         })}
       </div>
-      <ShellUserMenu compact />
+      <ShellUserMenu compact onSettingsNavigate={onSettingsNavigate} />
     </div>
   )
 }

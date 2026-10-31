@@ -19,7 +19,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty"
 import { Input } from "@/components/ui/input"
-import { mainNavigation } from "@/config/navigation"
+import { allNavigation } from "@/config/navigation"
 
 export function WorkspaceSearch() {
   const [open, setOpen] = useState(false)
@@ -45,7 +45,7 @@ export function WorkspaceSearch() {
   }, [])
 
   const normalizedQuery = query.trim().toLocaleLowerCase()
-  const results = mainNavigation.flatMap((section) =>
+  const results = allNavigation.flatMap((section) =>
     section.items
       .filter((item) =>
         `${section.title} ${item.title}`
