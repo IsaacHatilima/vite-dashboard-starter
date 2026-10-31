@@ -127,6 +127,20 @@ describe("RailShell", () => {
     )
   })
 
+  it("opens the account menu from the rail's avatar", async () => {
+    const { user } = renderShell(RailShell, "/dashboard")
+
+    await user.click(
+      screen.getByRole("button", {
+        name: `Account menu for ${placeholderUser.name}`,
+      })
+    )
+
+    expect(
+      await screen.findByRole("menuitem", { name: "Log out" })
+    ).toBeVisible()
+  })
+
   async function collapse(user: ReturnType<typeof renderShell>["user"]) {
     await user.click(screen.getByRole("button", { name: "Toggle sidebar" }))
     expect(sidebarState()).toBe("collapsed")

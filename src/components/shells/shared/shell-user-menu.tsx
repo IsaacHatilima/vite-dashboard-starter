@@ -7,6 +7,7 @@ import {
 import { Link } from "react-router"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,68 +55,90 @@ function UserIdentity({ user }: { user: ShellUser }) {
 }
 
 interface ShellUserMenuProps {
-  // RailShell's icon rail only has room for the avatar.
+  // RailShell's icon rail only has room for the avatar: a round one in an
+  // icon button, as ChatGPT's rail has.
   compact?: boolean
+}
+
+function RailAvatar({ user }: { user: ShellUser }) {
+  return (
+    <Avatar size="sm">
+      {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" />}
+      <AvatarFallback>{initials(user.name)}</AvatarFallback>
+    </Avatar>
+  )
 }
 
 export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
   const { isMobile } = useSidebar()
   const user = placeholderUser
 
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <SidebarMenuButton
-                size="lg"
-                className={
-                  compact
-                    ? "md:h-8 md:p-0 data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
-                    : "aria-expanded:bg-muted"
-                }
-              />
-            }
-          >
+  const menu = (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          compact ? (
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              aria-label={`Account menu for ${user.name}`}
+            />
+          ) : (
+            <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
+          )
+        }
+      >
+        {compact ? (
+          <RailAvatar user={user} />
+        ) : (
+          <>
             <UserIdentity user={user} />
             <ChevronsUpDownIcon className="ml-auto size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuGroup>
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <UserIdentity user={user} />
-                </div>
-              </DropdownMenuLabel>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem render={<Link to={routes.profile} />}>
-                <UserIcon />
-                Profile
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link to={routes.security} />}>
-                <ShieldCheckIcon />
-                Security
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {/* No session to end yet: logging out goes back to login. */}
-              <DropdownMenuItem render={<Link to={routes.login} />}>
-                <LogOutIcon />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
+          </>
+        )}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="min-w-56 rounded-lg"
+        side={isMobile ? "bottom" : "right"}
+        align="end"
+        sideOffset={4}
+      >
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="p-0 font-normal">
+            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <UserIdentity user={user} />
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem render={<Link to={routes.profile} />}>
+            <UserIcon />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link to={routes.security} />}>
+            <ShieldCheckIcon />
+            Security
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          {/* No session to end yet: logging out goes back to login. */}
+          <DropdownMenuItem render={<Link to={routes.login} />}>
+            <LogOutIcon />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+
+  if (compact) {
+    return menu
+  }
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>{menu}</SidebarMenuItem>
     </SidebarMenu>
   )
 }

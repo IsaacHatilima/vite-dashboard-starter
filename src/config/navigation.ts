@@ -21,6 +21,8 @@ export interface NavSection {
   url: string
   icon: LucideIcon
   items: NavItem[]
+  // RailShell draws a divider above this section, as ChatGPT's rail does.
+  dividerBefore?: boolean
 }
 
 export interface NavLink {
@@ -85,6 +87,7 @@ export const mainNavigation: NavSection[] = [
     title: "Settings",
     url: routes.profile,
     icon: Settings2Icon,
+    dividerBefore: true,
     items: [
       {
         title: "Profile",
