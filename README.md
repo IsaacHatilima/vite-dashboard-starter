@@ -217,6 +217,10 @@ example; there is no feature-specific dialog wrapper.
 
 ## Drawers
 
+To review the examples, open `/dashboard` and scroll to **Drawers**. The
+**Default drawer**, **Nested drawers**, and **Non-modal drawer** buttons open
+interactive demos of each mode.
+
 The shared Base UI drawer is installed at `src/components/ui/drawer.tsx`.
 It uses the app's clear, dimmed overlay and supports the native shadcn/Base UI
 props:
