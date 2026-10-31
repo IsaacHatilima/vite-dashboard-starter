@@ -62,6 +62,113 @@ describe("Input", () => {
     expect(input).toHaveValue("aB!23@example")
   })
 
+  it("reveals and hides a password without changing its value, ref, selection, or form submission", async () => {
+    const user = userEvent.setup()
+    const ref = createRef<HTMLInputElement>()
+    const submit = vi.fn()
+    render(
+      <form
+        aria-label="Password form"
+        onSubmit={(event) => {
+          event.preventDefault()
+          submit()
+        }}
+      >
+        <Input
+          ref={ref}
+          id="current-password"
+          name="password"
+          aria-label="Password"
+          type="password"
+          autoComplete="current-password"
+        />
+      </form>
+    )
+    const input = screen.getByLabelText<HTMLInputElement>("Password")
+    await user.type(input, "aB!23@example")
+    input.setSelectionRange(2, 5)
+    await user.click(screen.getByRole("button", { name: "Show password" }))
+
+    expect(input).toHaveAttribute("type", "text")
+    expect(input).toHaveAttribute("autocomplete", "current-password")
+    expect(ref.current).toBe(input)
+    expect(input).toHaveFocus()
+    expect(input.selectionStart).toBe(2)
+    expect(input.selectionEnd).toBe(5)
+    expect(
+      screen.getByRole("button", { name: "Hide password" })
+    ).toHaveAttribute("aria-pressed", "true")
+    expect(
+      new FormData(screen.getByRole<HTMLFormElement>("form")).get("password")
+    ).toBe("aB!23@example")
+    await user.click(screen.getByRole("button", { name: "Hide password" }))
+    expect(input).toHaveAttribute("type", "password")
+    expect(input).toHaveValue("aB!23@example")
+    expect(submit).not.toHaveBeenCalled()
+  })
+
+  it("keeps visibility independent between password fields", async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <Input aria-label="Password" type="password" defaultValue="secret" />
+        <Input
+          aria-label="Confirm password"
+          type="password"
+          defaultValue="secret"
+        />
+      </>
+    )
+
+    await user.click(
+      screen.getAllByRole("button", { name: "Show password" })[0]
+    )
+
+    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "text")
+    expect(screen.getByLabelText("Confirm password")).toHaveAttribute(
+      "type",
+      "password"
+    )
+  })
+
+  it("lets keyboard users reveal a read-only password", async () => {
+    const user = userEvent.setup()
+    render(
+      <Input
+        aria-label="Password"
+        type="password"
+        value="read-only-secret"
+        readOnly
+      />
+    )
+    const input = screen.getByLabelText("Password")
+    const toggle = screen.getByRole("button", { name: "Show password" })
+    toggle.focus()
+    await user.keyboard("{Enter}")
+
+    expect(input).toHaveAttribute("type", "text")
+    expect(input).toHaveAttribute("readonly")
+    expect(toggle).toHaveFocus()
+    expect(toggle).toHaveAttribute("aria-label", "Hide password")
+    await user.keyboard(" ")
+    expect(input).toHaveAttribute("type", "password")
+    expect(input).toHaveValue("read-only-secret")
+  })
+
+  it("disables the reveal action with a disabled password input", async () => {
+    const user = userEvent.setup()
+    render(<Input aria-label="Password" type="password" disabled />)
+    const toggle = screen.getByRole("button", { name: "Show password" })
+
+    expect(toggle).toBeDisabled()
+    await user.click(toggle)
+    expect(screen.getByLabelText("Password")).toBeDisabled()
+    expect(screen.getByLabelText("Password")).toHaveAttribute(
+      "type",
+      "password"
+    )
+  })
+
   it("allows partial email typing and validates the complete address", async () => {
     const user = userEvent.setup()
     render(<Input aria-label="Email" type="email" />)

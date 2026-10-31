@@ -113,7 +113,9 @@ Use the shared `Input` from `@/components/ui/input`:
 <Input type="email" aria-label="Email" autoComplete="email" />
 ```
 
-Text is the default. Passwords are masked using the native password input.
+Text is the default. Password inputs include a Show/Hide password control;
+visibility is independent for each field. The shared Input uses InputGroup
+for the icon action while retaining native input refs, autocomplete, and form values.
 Number inputs allow signed decimals and reject letters/exponent notation and
 invalid pasted or dropped text. They default to a decimal keyboard and
 `step="any"`; explicit `min`, `max`, `step`, and `inputMode` props still apply.
@@ -212,6 +214,60 @@ explicit `stack` override for existing usage.
 children. Escape and Close restore trigger focus. The overlay dims the page
 without blur. The dashboard composes these same parts as a workspace-guide
 example; there is no feature-specific dialog wrapper.
+
+## Drawers
+
+The shared Base UI drawer is installed at `src/components/ui/drawer.tsx`.
+It uses the app's clear, dimmed overlay and supports the native shadcn/Base UI
+props:
+
+```tsx
+<Drawer>...</Drawer>                                      // modal by default
+<Drawer modal={false}>...</Drawer>                        // background stays interactive
+<Drawer modal={false} disablePointerDismissal>...</Drawer> // stays open on outside presses
+```
+
+Nesting is detected automatically. Place another `Drawer` inside the parent's
+`DrawerContent`; opening it stacks the parent behind it, and closing it returns
+to the parent:
+
+```tsx
+<Drawer>
+  <DrawerTrigger render={<Button />}>Open parent</DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Parent drawer</DrawerTitle>
+      <DrawerDescription>Choose an item to see its details.</DrawerDescription>
+    </DrawerHeader>
+    <div className="p-4">
+      <Drawer>
+        <DrawerTrigger render={<Button />}>Open child</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Child drawer</DrawerTitle>
+            <DrawerDescription>Item details and actions.</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <DrawerClose render={<Button variant="outline" />}>
+              Back
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
+    <DrawerFooter>
+      <DrawerClose render={<Button variant="outline" />}>Close</DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+Import all `Drawer*` parts from `@/components/ui/drawer`. Directions use
+`swipeDirection="down" | "up" | "left" | "right"`. `showSwipeHandle` enables a
+handle; `snapPoints` enables vertical snap positions. Header/footer accept any
+React children. Put long content in a `min-h-0 flex-1 overflow-y-auto` region
+between them to keep actions visible. The body is positioned for the documented
+iOS Safari overlay behavior.
 
 ## Adding features
 
