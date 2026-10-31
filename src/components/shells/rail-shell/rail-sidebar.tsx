@@ -102,7 +102,7 @@ export function RailSidebar() {
           {!collapsed && (
             <SectionPanel
               section={selected}
-              className="flex-1 rounded-l-2xl bg-background shadow-(--sidebar-panel-shadow)"
+              className="flex-1 rounded-l-2xl bg-sidebar-panel shadow-(--sidebar-panel-shadow)"
               onToggle={() => {
                 peek.close()
                 // Collapsing removes this button; keep focus in the rail.
