@@ -75,11 +75,11 @@ export function RailSidebar() {
   return (
     <>
       <Sidebar collapsible="icon" className="overflow-hidden">
-        {/* The rail sits on the sidebar colour; the panel is a sheet raised
-            off it, with rounded corners and a soft shadow. */}
+        {/* The icon rail has its own surface; the navigation panel shares
+            the body colour, with rounded corners and a soft shadow. */}
         <div
           ref={rowRef}
-          className="flex h-full w-full flex-row"
+          className="flex h-full w-full flex-row bg-sidebar-rail"
           {...peekHandlers}
         >
           <SectionRail
