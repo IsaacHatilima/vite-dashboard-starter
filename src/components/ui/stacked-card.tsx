@@ -36,7 +36,7 @@ function StackedCard({
       <div
         data-slot="stacked-card"
         className={cn(
-          "flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card p-1 text-card-foreground",
+          "isolate flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card text-card-foreground",
           className
         )}
         {...props}
@@ -64,6 +64,7 @@ function StackHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function StackContent({
+  border = false,
   className,
   ...props
 }: React.ComponentProps<typeof Card>) {
@@ -72,7 +73,11 @@ function StackContent({
   return (
     <Card
       data-slot="stack-content"
-      className={cn("min-w-0 flex-1 shadow-xs", className)}
+      border={border}
+      className={cn(
+        "relative z-10 min-w-0 flex-1 rounded-2xl shadow-(--stacked-card-shadow)",
+        className
+      )}
       {...props}
     />
   )

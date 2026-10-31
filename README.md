@@ -136,7 +136,9 @@ to `true`. Use `<Card border={false}>` to remove its outer outline.
 header with `top`, its footer with `bottom`, or both. Both flags default to
 `false`; disabled sections render nothing. `StackHeader` and `StackFooter`
 accept any React children, including buttons and inputs. `StackContent` is the
-raised inner Card and accepts the standard Card props and parts:
+raised inner Card, with flush edges and a soft shadow over the backing surface.
+It defaults to `border={false}`; pass `border` to add the standard Card outline.
+It accepts the standard Card props and parts:
 
 ```tsx
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
