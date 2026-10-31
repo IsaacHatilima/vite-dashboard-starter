@@ -65,6 +65,7 @@ export function StickyFooterDialog() {
         Open sticky footer dialog
       </DialogTrigger>
       <DialogContent
+        stack
         className="flex max-h-[calc(100svh-2rem)] flex-col overflow-hidden sm:max-w-lg"
         initialFocus={titleRef}
         finalFocus={triggerRef}

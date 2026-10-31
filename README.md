@@ -125,8 +125,12 @@ button dismiss it and return focus to the trigger.
 
 When composing another dialog, put `overflow-y-auto` and a maximum height on the
 body region, with `min-h-0` inside a height-constrained flex column. Keep
-`DialogHeader` and `DialogFooter` as non-scrolling siblings. The shared Dialog
-primitive is unchanged, so other dialogs can still use their own layouts.
+`DialogHeader` and `DialogFooter` as non-scrolling siblings.
+
+Use `<DialogContent stack>` (or `stack={true}`) for a layered edge: a backing
+frame with an inner and outer hairline. It defaults to `false` for the standard
+dialog surface. The dashboard's sticky-footer example enables it. Dialog
+overlays dim the page without blurring it, with a stronger dim in dark mode.
 
 ## Adding features
 

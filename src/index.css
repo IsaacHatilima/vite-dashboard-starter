@@ -42,6 +42,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-stacked-card: var(--stacked-card);
+  --color-dialog-overlay: var(--dialog-overlay);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
   --radius-sm: calc(var(--radius) * 0.6);
@@ -61,6 +62,10 @@
   --foreground: #0d0d0d;
   --card: #ffffff;
   --stacked-card: var(--secondary);
+  --dialog-overlay: rgb(0 0 0 / 15%);
+  --dialog-stack-shadow:
+    0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
+    0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 20%);
   --card-foreground: #0d0d0d;
   --popover: #ffffff;
   --popover-foreground: #0d0d0d;
@@ -106,6 +111,10 @@
   --foreground: #ededed;
   --card: #212121;
   --stacked-card: #181818;
+  --dialog-overlay: rgb(0 0 0 / 30%);
+  --dialog-stack-shadow:
+    0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
+    0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 40%);
   --card-foreground: #ededed;
   --popover: #212121;
   --popover-foreground: #ededed;
