@@ -37,20 +37,37 @@ and add route guards in `src/router.tsx`.
 
 ## Swapping the dashboard shell
 
-Every page after login renders inside a shell. There are three, all with the
+Every page after login renders inside a shell. There are four, all with the
 same props and all reading `src/config/navigation.ts`:
 
-| Shell          | shadcn block | Looks like                                                                                                    |
-| -------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
-| `InsetShell`   | `sidebar-08` | Page floats as a rounded inset panel; collapsible nav sections                                                |
-| `RailShell`    | `sidebar-09` | ChatGPT-style: icon rail picks a section (no navigation), panel lists its pages; collapse button in the panel |
-| `ClassicShell` | `sidebar-03` | Full-height sidebar with every section and its pages listed open                                              |
+| Shell            | shadcn block | Looks like                                                                                                            |
+| ---------------- | ------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `InsetShell`     | `sidebar-08` | Page floats as a rounded inset panel; collapsible nav sections                                                        |
+| `RailShell`      | `sidebar-09` | ChatGPT-style: icon rail picks a section (no navigation), panel lists its pages; collapse button in the panel         |
+| `ClassicShell`   | `sidebar-03` | Full-height sidebar with every section and its pages listed open                                                      |
+| `WorkspaceShell` | Custom       | Full navigation, top toolbar, inset page and a collapsible assistant panel, based on the supplied workspace reference |
 
 Change the one import in `src/layouts/dashboard-layout.tsx`:
 
 ```tsx
-import { RailShell as DashboardShell } from "@/components/shells"
+import { WorkspaceShell as DashboardShell } from "@/components/shells"
 ```
+
+`WorkspaceShell` is the active variant. Its toolbar searches the shared page
+navigation with Cmd/Ctrl+K. The assistant docks beside the page at 1280px and
+above; on smaller screens it opens as a drawer. The starter panel offers page
+shortcuts and a disabled composer: it has no assistant service connected.
+Replace its content through the optional `assistant` prop when integrating your
+own assistant or contextual tools:
+
+```tsx
+<WorkspaceShell assistant={<YourAssistant />}>
+  <Outlet />
+</WorkspaceShell>
+```
+
+Keep conversation and draft state above the shell if it should survive closing
+the panel or switching between its docked and drawer layouts.
 
 Add, rename or reorder nav items in `src/config/navigation.ts` and every shell
 picks them up. Add the matching route in `src/router.tsx`. The name and email

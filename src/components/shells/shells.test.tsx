@@ -6,7 +6,13 @@ import { describe, expect, it } from "vitest"
 
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { placeholderUser } from "@/config/app"
-import { ClassicShell, InsetShell, RailShell, type ShellProps } from "."
+import {
+  ClassicShell,
+  InsetShell,
+  RailShell,
+  WorkspaceShell,
+  type ShellProps,
+} from "."
 import { initials } from "./shared/shell-user-menu"
 
 function renderShell(Shell: React.ComponentType<ShellProps>, path: string) {
@@ -26,6 +32,7 @@ const shells = [
   ["InsetShell", InsetShell],
   ["RailShell", RailShell],
   ["ClassicShell", ClassicShell],
+  ["WorkspaceShell", WorkspaceShell],
 ] as const
 
 describe.each(shells)("%s", (_, Shell) => {
