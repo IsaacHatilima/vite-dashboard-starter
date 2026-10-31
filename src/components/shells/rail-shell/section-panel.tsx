@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar"
 import type { NavSection } from "@/config/navigation"
 import { useActiveNavigation } from "../shared/active-navigation"
+import { ICON_STROKE_WIDTH } from "./icon-stroke"
 
 interface SectionPanelProps {
   section: NavSection
@@ -43,19 +44,23 @@ export function SectionPanel({
       )}
     >
       <SidebarHeader className="flex-row items-center justify-between py-2 pr-2.5 pl-4">
-        <h2 className="truncate text-base">{section.title}</h2>
+        <h2 className="truncate text-[17px] leading-6 font-semibold">
+          {section.title}
+        </h2>
+        {/* aria-expanded reports the sidebar's state, so cancel the ghost
+            button's open look: ChatGPT shows a bare icon until hovered. */}
         <Button
           variant="ghost"
           size="icon-lg"
           aria-label="Toggle sidebar"
           aria-expanded={open}
-          className="text-muted-foreground"
+          className="rounded-md text-sidebar-muted-foreground aria-expanded:bg-transparent aria-expanded:text-sidebar-muted-foreground hover:aria-expanded:bg-muted hover:aria-expanded:text-foreground"
           onClick={() => {
             onToggle?.()
             toggleSidebar()
           }}
         >
-          <PanelLeftIcon className="size-5" />
+          <PanelLeftIcon strokeWidth={ICON_STROKE_WIDTH} className="size-5" />
         </Button>
       </SidebarHeader>
       <SidebarContent>
@@ -69,7 +74,8 @@ export function SectionPanel({
                     <SidebarMenuItem key={item.url}>
                       <SidebarMenuButton
                         isActive={itemActive}
-                        className="h-9"
+                        // ChatGPT marks the current page by its fill alone.
+                        className="h-9 data-active:font-normal"
                         render={
                           <Link
                             to={item.url}

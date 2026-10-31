@@ -74,14 +74,12 @@ export function RailSidebar() {
 
   return (
     <>
-      <Sidebar
-        collapsible="icon"
-        className="overflow-hidden group-data-[side=left]:border-r-0"
-      >
-        {/* The rail sits on the page colour, which shows at the panel's corners. */}
+      <Sidebar collapsible="icon" className="overflow-hidden">
+        {/* The rail sits on the sidebar colour; the panel is a sheet raised
+            off it, with rounded corners and a soft shadow. */}
         <div
           ref={rowRef}
-          className="flex h-full w-full flex-row bg-background"
+          className="flex h-full w-full flex-row"
           {...peekHandlers}
         >
           <SectionRail
@@ -104,7 +102,7 @@ export function RailSidebar() {
           {!collapsed && (
             <SectionPanel
               section={selected}
-              className="flex-1 rounded-l-2xl bg-sidebar"
+              className="flex-1 rounded-l-2xl bg-background shadow-(--sidebar-panel-shadow)"
               onToggle={() => {
                 peek.close()
                 // Collapsing removes this button; keep focus in the rail.
@@ -127,7 +125,7 @@ export function RailSidebar() {
         >
           <SectionPanel
             section={peekSection}
-            className="h-full rounded-xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10"
+            className="h-full rounded-xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/10 dark:ring-foreground/5"
             onToggle={() => {
               setSelected(peekSection)
               peek.close()

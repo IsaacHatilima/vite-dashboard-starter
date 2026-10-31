@@ -1,3 +1,6 @@
+import { cn } from "cn"
+import { Fragment } from "react"
+
 import { Button } from "@/components/ui/button"
 import {
   Tooltip,
@@ -6,6 +9,7 @@ import {
 } from "@/components/ui/tooltip"
 import type { NavSection } from "@/config/navigation"
 import { ShellUserMenu } from "../shared/shell-user-menu"
+import { ICON_STROKE_WIDTH } from "./icon-stroke"
 
 interface SectionRailProps {
   sections: NavSection[]
@@ -37,36 +41,44 @@ export function SectionRail({
         {sections.map((section) => {
           const isSelected = section.title === selected.title
           return (
-            // Collapsed, the floating card names the section, so the tooltip
-            // is off entirely (an invisible open tooltip would eat Escape).
-            <Tooltip key={section.title} disabled={collapsed}>
-              <TooltipTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-lg"
-                    data-section={section.title}
-                    aria-pressed={isSelected}
-                    aria-expanded={
-                      collapsed ? peeked?.title === section.title : undefined
-                    }
-                    className="text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
-                    onClick={() => onSelect(section)}
-                    onMouseEnter={() => onHover(section)}
+            <Fragment key={section.title}>
+              {section.dividerBefore && (
+                <div aria-hidden className="-my-1 h-px w-6 bg-sidebar-border" />
+              )}
+              {/* Collapsed, the floating card names the section, so the
+                  tooltip is off entirely (an invisible open tooltip would
+                  eat Escape). */}
+              <Tooltip disabled={collapsed}>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-lg"
+                      data-section={section.title}
+                      aria-pressed={isSelected}
+                      aria-expanded={
+                        collapsed ? peeked?.title === section.title : undefined
+                      }
+                      className="text-sidebar-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground"
+                      onClick={() => onSelect(section)}
+                      onMouseEnter={() => onHover(section)}
+                    />
+                  }
+                >
+                  {/* Filled once selected, as ChatGPT's are. */}
+                  <section.icon
+                    strokeWidth={ICON_STROKE_WIDTH}
+                    className={cn("size-5", isSelected && "fill-current")}
                   />
-                }
-              >
-                <section.icon className="size-5" />
-                <span className="sr-only">{section.title}</span>
-              </TooltipTrigger>
-              <TooltipContent side="right">{section.title}</TooltipContent>
-            </Tooltip>
+                  <span className="sr-only">{section.title}</span>
+                </TooltipTrigger>
+                <TooltipContent side="right">{section.title}</TooltipContent>
+              </Tooltip>
+            </Fragment>
           )
         })}
       </div>
-      <div className="w-full px-2">
-        <ShellUserMenu compact />
-      </div>
+      <ShellUserMenu compact />
     </div>
   )
 }
