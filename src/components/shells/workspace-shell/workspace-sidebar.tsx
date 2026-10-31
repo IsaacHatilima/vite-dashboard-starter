@@ -1,4 +1,4 @@
-import { ArrowUpRightIcon, UsersIcon } from "lucide-react"
+import { UsersIcon } from "lucide-react"
 import { Link } from "react-router"
 
 import {
@@ -25,25 +25,27 @@ export function WorkspaceSidebar() {
 
   return (
     <Sidebar variant="inset" collapsible="icon" className="p-2">
-      <SidebarHeader className="mb-3 p-1">
+      <SidebarHeader className="mb-1 p-1">
         <ShellBrand />
       </SidebarHeader>
-      <SidebarContent className="gap-3">
+      <SidebarContent>
         <nav aria-label="Workspace navigation">
           {mainNavigation.map((section) => (
-            <SidebarGroup key={section.title} className="px-2 py-1">
-              <SidebarGroupLabel className="text-[10px] font-medium tracking-wider uppercase">
-                {section.title}
-              </SidebarGroupLabel>
-              <SidebarMenu className="gap-1">
+            <SidebarGroup
+              key={section.title}
+              className="mt-3.5 px-2 py-0 first:mt-0"
+            >
+              <SidebarGroupLabel>{section.title}</SidebarGroupLabel>
+              <SidebarMenu>
                 {section.items.map((item) => {
                   const isActive = active.item?.url === item.url
+                  const Icon = item.icon ?? section.icon
                   return (
                     <SidebarMenuItem key={item.url}>
                       <SidebarMenuButton
                         isActive={isActive}
                         tooltip={item.title}
-                        className="h-9 gap-3 border border-transparent data-active:border-border data-active:bg-card data-active:shadow-xs [&>svg]:stroke-[1.5] [&>svg]:text-sidebar-muted-foreground"
+                        className="border border-transparent data-active:border-border data-active:bg-card data-active:shadow-xs [&>svg]:text-sidebar-muted-foreground"
                         render={
                           <Link
                             to={item.url}
@@ -51,7 +53,7 @@ export function WorkspaceSidebar() {
                           />
                         }
                       >
-                        <section.icon />
+                        <Icon />
                         <span>{item.title}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -74,10 +76,7 @@ export function WorkspaceSidebar() {
           <span className="text-xs text-muted-foreground">
             Bring your team together.
           </span>
-          <span className="flex items-center gap-1 text-xs font-medium">
-            Invite members
-            <ArrowUpRightIcon className="size-3" />
-          </span>
+          <span className="text-xs font-medium">Invite members</span>
         </Link>
         <ShellUserMenu />
       </SidebarFooter>

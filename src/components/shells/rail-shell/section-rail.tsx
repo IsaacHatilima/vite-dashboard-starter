@@ -38,7 +38,7 @@ export function SectionRail({
       <div
         role="group"
         aria-label="Sections"
-        className="flex min-h-0 flex-1 flex-col items-center gap-4"
+        className="flex min-h-0 flex-1 flex-col items-center gap-3"
       >
         {sections.map((section) => {
           const isSelected = section.title === selected.title
@@ -70,7 +70,7 @@ export function SectionRail({
                   {/* Filled once selected, as ChatGPT's are. */}
                   <section.icon
                     strokeWidth={ICON_STROKE_WIDTH}
-                    className={cn("size-5", isSelected && "fill-current")}
+                    className={cn("size-4", isSelected && "fill-current")}
                   />
                   <span className="sr-only">{section.title}</span>
                 </TooltipTrigger>

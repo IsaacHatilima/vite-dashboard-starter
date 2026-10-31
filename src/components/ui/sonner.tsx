@@ -27,6 +27,7 @@ const Toaster = ({ position = "bottom-center", ...props }: ToasterProps) => {
       }}
       style={
         {
+          fontFamily: "inherit",
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
@@ -34,6 +35,11 @@ const Toaster = ({ position = "bottom-center", ...props }: ToasterProps) => {
         } as React.CSSProperties
       }
       toastOptions={{
+        style: {
+          fontFamily: "inherit",
+          fontSize: "var(--text-sm)",
+          lineHeight: 1.45,
+        },
         classNames: {
           toast: "cn-toast",
         },

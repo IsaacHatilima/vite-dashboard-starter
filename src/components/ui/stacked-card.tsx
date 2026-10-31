@@ -55,7 +55,7 @@ function StackHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="stack-header"
       className={cn(
-        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-2 text-sm wrap-anywhere text-muted-foreground [&>*]:min-w-0",
+        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-1.5 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
         className
       )}
       {...props}
@@ -91,7 +91,7 @@ function StackFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="stack-footer"
       className={cn(
-        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-2 text-sm wrap-anywhere text-muted-foreground [&>*]:min-w-0",
+        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-1.5 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
         className
       )}
       {...props}

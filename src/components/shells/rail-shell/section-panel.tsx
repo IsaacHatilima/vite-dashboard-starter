@@ -45,15 +45,13 @@ export function SectionPanel({
         className
       )}
     >
-      <SidebarHeader className="flex-row items-center justify-between py-2 pr-2.5 pl-4">
-        <h2 className="truncate text-[17px] leading-6 font-semibold">
-          {section.title}
-        </h2>
+      <SidebarHeader className="h-(--app-header-height) flex-row items-center justify-between py-0 pr-2.5 pl-4">
+        <h2 className="truncate text-base font-semibold">{section.title}</h2>
         {/* aria-expanded reports the sidebar's state, so cancel the ghost
             button's open look: ChatGPT shows a bare icon until hovered. */}
         <Button
           variant="ghost"
-          size="icon-lg"
+          size="icon-sm"
           aria-label="Toggle sidebar"
           aria-expanded={open}
           className="rounded-md text-sidebar-muted-foreground aria-expanded:bg-transparent aria-expanded:text-sidebar-muted-foreground hover:aria-expanded:bg-muted hover:aria-expanded:text-foreground"
@@ -62,38 +60,33 @@ export function SectionPanel({
             toggleSidebar()
           }}
         >
-          <PanelLeftIcon strokeWidth={ICON_STROKE_WIDTH} className="size-5" />
+          <PanelLeftIcon strokeWidth={ICON_STROKE_WIDTH} className="size-4" />
         </Button>
       </SidebarHeader>
       <SidebarContent>
         <nav
           aria-label={`${section.title} pages`}
-          className="flex flex-col gap-1"
+          className="flex flex-col gap-3.5"
         >
           {groups.map((group) => (
-            <SidebarGroup key={group.title ?? section.title} className="pt-0">
+            <SidebarGroup
+              key={group.title ?? section.title}
+              className="px-2 py-0"
+            >
               {group.title && (
-                <SidebarGroupLabel
-                  render={<h3 />}
-                  className="h-7 text-[11px] font-medium tracking-wider text-sidebar-muted-foreground uppercase"
-                >
+                <SidebarGroupLabel render={<h3 />}>
                   {group.title}
                 </SidebarGroupLabel>
               )}
               <SidebarGroupContent>
-                <SidebarMenu className={cn(section.groups && "gap-0.5")}>
+                <SidebarMenu>
                   {group.items.map((item) => {
                     const itemActive = active.item?.url === item.url
                     return (
                       <SidebarMenuItem key={item.url}>
                         <SidebarMenuButton
                           isActive={itemActive}
-                          // ChatGPT marks the current page by its fill alone.
-                          className={cn(
-                            "h-9 data-active:font-normal",
-                            section.groups &&
-                              "h-auto min-h-10 py-1.5 text-[13px] md:min-h-8"
-                          )}
+                          className={cn(section.groups && "[&_svg]:size-3.5")}
                           render={
                             <Link
                               to={item.url}

@@ -1,5 +1,8 @@
 import {
+  ArchiveIcon,
   AtSignIcon,
+  ChartNoAxesCombinedIcon,
+  FileChartColumnIcon,
   FolderKanbanIcon,
   KeyboardIcon,
   KeyRoundIcon,
@@ -13,6 +16,7 @@ import {
   SlidersHorizontalIcon,
   SmartphoneIcon,
   UserCheckIcon,
+  UserPlusIcon,
   UserRoundIcon,
   UsersIcon,
   type LucideIcon,
@@ -59,14 +63,17 @@ export const mainNavigation: NavSection[] = [
       {
         title: "Overview",
         url: routes.dashboard,
+        icon: LayoutDashboardIcon,
       },
       {
         title: "Analytics",
         url: routes.analytics,
+        icon: ChartNoAxesCombinedIcon,
       },
       {
         title: "Reports",
         url: routes.reports,
+        icon: FileChartColumnIcon,
       },
     ],
   },
@@ -78,10 +85,12 @@ export const mainNavigation: NavSection[] = [
       {
         title: "All projects",
         url: routes.projects,
+        icon: FolderKanbanIcon,
       },
       {
         title: "Archived",
         url: routes.archivedProjects,
+        icon: ArchiveIcon,
       },
     ],
   },
@@ -93,10 +102,12 @@ export const mainNavigation: NavSection[] = [
       {
         title: "Members",
         url: routes.team,
+        icon: UsersIcon,
       },
       {
         title: "Invitations",
         url: routes.invitations,
+        icon: UserPlusIcon,
       },
     ],
   },

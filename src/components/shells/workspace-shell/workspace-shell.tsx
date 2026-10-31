@@ -80,7 +80,7 @@ export function WorkspaceShell({ children, assistant }: WorkspaceShellProps) {
       className="bg-sidebar"
       style={
         {
-          "--sidebar-width": "15rem",
+          "--sidebar-width": "252px",
           "--sidebar-width-icon": "3.5rem",
         } as CSSProperties
       }
@@ -93,11 +93,11 @@ export function WorkspaceShell({ children, assistant }: WorkspaceShellProps) {
           assistantOpen={assistantOpen}
           onAssistantToggle={() => setAssistantOpen(!assistantOpen)}
         />
-        <div className="mx-2 mb-2 flex min-h-[calc(100svh-4rem)] flex-1 rounded-2xl bg-background shadow-xs md:mr-3 md:mb-3 md:ml-0 md:min-h-[calc(100svh-4.25rem)]">
+        <div className="mx-2 mb-2 flex min-h-[calc(100svh-var(--app-header-height)-0.5rem)] flex-1 rounded-2xl bg-background shadow-xs md:mr-3 md:mb-3 md:ml-0 md:min-h-[calc(100svh-var(--app-header-height)-0.75rem)]">
           <main
             id={MAIN_CONTENT_ID}
             tabIndex={-1}
-            className="flex min-w-0 flex-1 flex-col gap-6 p-4 outline-none md:p-6"
+            className="flex min-w-0 flex-1 flex-col gap-4 px-(--app-gutter) pt-(--app-page-top) pb-6 outline-none"
           >
             {children}
           </main>
@@ -105,9 +105,9 @@ export function WorkspaceShell({ children, assistant }: WorkspaceShellProps) {
             <aside
               id="workspace-assistant"
               aria-label="Workspace assistant"
-              className="sticky top-14 flex h-[calc(100svh-4.25rem)] w-[clamp(19rem,24vw,25rem)] shrink-0 flex-col self-start rounded-r-2xl border-l bg-background"
+              className="sticky top-(--app-header-height) flex h-[calc(100svh-var(--app-header-height)-0.75rem)] w-[clamp(19rem,24vw,25rem)] shrink-0 flex-col self-start rounded-r-2xl border-l bg-background"
             >
-              <div className="flex h-14 shrink-0 items-center justify-between gap-2 px-5">
+              <div className="flex h-(--app-header-height) shrink-0 items-center justify-between gap-2 px-4">
                 <h2 className="text-sm font-semibold">Workspace assistant</h2>
                 <Button
                   variant="ghost"

@@ -26,7 +26,7 @@ export function WorkspaceHeader({
   const { section, item } = useActiveNavigation()
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 min-w-0 shrink-0 items-center gap-2 bg-sidebar px-3 md:pr-4">
+    <header className="sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-sidebar px-(--app-gutter)">
       <SidebarTrigger aria-label="Toggle sidebar" className="shrink-0" />
       <Breadcrumb className="min-w-0 flex-1">
         <BreadcrumbList className="flex-nowrap">
@@ -55,13 +55,13 @@ export function WorkspaceHeader({
         <Button
           id="workspace-assistant-toggle"
           variant="default"
-          size="icon-lg"
+          size="icon"
           aria-label="Toggle assistant"
           aria-expanded={assistantOpen}
           aria-controls="workspace-assistant"
           onClick={onAssistantToggle}
         >
-          <Sparkles strokeWidth={1.5} />
+          <Sparkles />
         </Button>
       </div>
     </header>

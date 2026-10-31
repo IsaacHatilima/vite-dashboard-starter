@@ -36,11 +36,11 @@ export function RailShell({ children }: ShellProps) {
         <SkipToContent />
         <RailSidebar />
         <SidebarInset>
-          <ShellHeader className="border-b p-4" toggleOnMobileOnly />
+          <ShellHeader className="border-b" toggleOnMobileOnly />
           <div
             id={MAIN_CONTENT_ID}
             tabIndex={-1}
-            className="flex flex-1 flex-col gap-4 p-4 outline-none"
+            className="flex min-w-0 flex-1 flex-col gap-4 px-(--app-gutter) pt-(--app-page-top) pb-6 outline-none"
           >
             {children}
           </div>

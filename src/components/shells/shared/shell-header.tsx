@@ -50,7 +50,7 @@ export function ShellHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex shrink-0 items-center gap-2 bg-background",
+        "sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-background px-(--app-gutter)",
         className
       )}
     >
@@ -63,17 +63,19 @@ export function ShellHeader({
           />
         </>
       )}
-      <Breadcrumb>
-        <BreadcrumbList>
+      <Breadcrumb className="min-w-0">
+        <BreadcrumbList className="flex-nowrap">
           {crumbs.map((crumb, index) => {
             const isLast = index === crumbs.length - 1
             return (
               <Fragment key={crumb.title}>
                 <BreadcrumbItem
-                  className={isLast ? undefined : "hidden md:block"}
+                  className={isLast ? "min-w-0" : "hidden md:block"}
                 >
                   {isLast || !crumb.url ? (
-                    <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                    <BreadcrumbPage className="truncate">
+                      {crumb.title}
+                    </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink render={<Link to={crumb.url} />}>
                       {crumb.title}

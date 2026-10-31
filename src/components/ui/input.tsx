@@ -27,13 +27,16 @@ function PasswordInput({
   const label = visible ? "Hide password" : "Show password"
 
   return (
-    <InputGroup className="h-auto">
+    <InputGroup className="h-auto max-md:h-auto">
       <InputGroupInput
         {...props}
         id={inputId}
         type={visible ? "text" : "password"}
         disabled={disabled}
-        className={cn("h-7.5", className)}
+        className={cn(
+          "h-[calc(var(--control-height)-2px)] max-md:h-9.5",
+          className
+        )}
       />
       <InputGroupAddon align="inline-end" className="py-0">
         <Tooltip>

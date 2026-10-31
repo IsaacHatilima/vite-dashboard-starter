@@ -10,7 +10,7 @@ export default function SettingsContainer() {
   if (shellHasSectionNavigation) return <Outlet />
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-row">
+    <div className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row">
       <SettingsNavigation />
       <div className="min-w-0 flex-1">
         <Outlet />

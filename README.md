@@ -35,6 +35,16 @@ put the request in each container's submit handler (scaffold it with
 `npx domain-driver --root src/features/auth make:action <screen>/User <action>`)
 and add route guards in `src/router.tsx`.
 
+## Typography and density
+
+The shared UI uses the measured Gr8r scale: locally bundled Geist/Geist Mono,
+13.5px body/navigation text, 12.5px controls, 11px group labels, compact desktop
+controls, and consistent shell gutters. Phone controls retain larger targets
+and 16px input text. Navigation icons identify individual pages and actions.
+
+The tokens live in `src/index.css`. Measurements, source assets, and deliberate
+adaptations are recorded in [the design notes](docs/design/gr8r-density.md).
+
 ## Swapping the auth shell
 
 All seven auth screens share the same forms and can use any of these frames:

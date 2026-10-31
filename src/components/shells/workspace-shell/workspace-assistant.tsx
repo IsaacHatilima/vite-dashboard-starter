@@ -1,4 +1,4 @@
-import { ArrowRightIcon, ArrowUpIcon, SparklesIcon } from "lucide-react"
+import { ArrowUpIcon, SparklesIcon } from "lucide-react"
 import { Link } from "react-router"
 
 import { Button } from "@/components/ui/button"
@@ -28,11 +28,8 @@ const shortcuts = [
 export function WorkspaceAssistant() {
   return (
     <>
-      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-5 pb-6">
-        <div className="flex flex-col gap-3">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-secondary text-secondary-foreground">
-            <SparklesIcon className="size-4" />
-          </span>
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-4 pb-6">
+        <div className="flex flex-col gap-2">
           <h3 className="text-base font-semibold">What are you working on?</h3>
           <p className="text-sm leading-relaxed text-muted-foreground">
             Keep useful context beside your work. Here are a few places to get
@@ -52,12 +49,11 @@ export function WorkspaceAssistant() {
                   {shortcut.description}
                 </span>
               </span>
-              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
             </Link>
           ))}
         </nav>
       </div>
-      <div className="p-5 pt-0">
+      <div className="p-4 pt-0">
         <div className="flex flex-col gap-3 rounded-xl border bg-card p-3 shadow-sm">
           <span className="flex items-center gap-1.5 text-xs font-medium">
             <SparklesIcon className="size-3.5 text-muted-foreground" />

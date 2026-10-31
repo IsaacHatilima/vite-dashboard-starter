@@ -164,7 +164,7 @@ export function ShellUserMenu({
                       value={value}
                       aria-label={label}
                       label={label}
-                      className="h-9 flex-1 justify-center px-0 focus-visible:ring-2 focus-visible:ring-ring data-checked:bg-popover data-checked:shadow-xs [&>[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
+                      className="h-(--control-height) flex-1 justify-center px-0 focus-visible:ring-2 focus-visible:ring-ring max-md:h-10 data-checked:bg-popover data-checked:shadow-xs [&>[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
                     />
                   }
                 >
