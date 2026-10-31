@@ -102,6 +102,29 @@ Add, rename or reorder nav items in `src/config/navigation.ts` and every shell
 picks them up. Add the matching route in `src/router.tsx`. The name and email
 in the user menu come from `placeholderUser` in `src/config/app.ts`.
 
+## Inputs
+
+Use the shared `Input` from `@/components/ui/input`:
+
+```tsx
+<Input aria-label="Name" />
+<Input type="password" aria-label="Password" autoComplete="current-password" />
+<Input type="number" aria-label="Amount" />
+<Input type="email" aria-label="Email" autoComplete="email" />
+```
+
+Text is the default. Passwords are masked using the native password input.
+Number inputs allow signed decimals and reject letters/exponent notation and
+invalid pasted or dropped text. They default to a decimal keyboard and
+`step="any"`; explicit `min`, `max`, `step`, and `inputMode` props still apply.
+
+Email inputs allow partial typing and use native email-format validation.
+Use `required` to reject an empty address. Native validation is available via
+`checkValidity()` and on normal form submission; forms using `noValidate`
+(including the starter's auth demos) intentionally skip submission validation.
+Other native input types, refs, events, and controlled/uncontrolled props remain
+available.
+
 ## Cards
 
 `Card` keeps its standard shadcn composition and accepts `border`, which defaults
