@@ -1,20 +1,40 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
-import { createRef } from "react"
+import { createRef, type ComponentProps } from "react"
 import { describe, expect, it, vi } from "vitest"
 
-import InputOTPDemo, { AnimatedOTP } from "./input-otp-09"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp"
 
-describe("AnimatedOTP", () => {
-  it("forwards input attributes and ref, accepts digits, and submits six characters", async () => {
+function OTPField({
+  maxLength = 6,
+  ...props
+}: Omit<
+  ComponentProps<typeof InputOTP>,
+  "children" | "render" | "maxLength"
+> & {
+  maxLength?: number
+}) {
+  return (
+    <InputOTP maxLength={maxLength} {...props}>
+      <InputOTPGroup>
+        {Array.from({ length: maxLength }, (_, index) => (
+          <InputOTPSlot key={index} index={index} />
+        ))}
+      </InputOTPGroup>
+    </InputOTP>
+  )
+}
+
+describe("InputOTP", () => {
+  it("forwards native attributes and ref, accepts digits, and completes six characters", async () => {
     const user = userEvent.setup()
     const inputRef = createRef<HTMLInputElement>()
     const onComplete = vi.fn()
     render(
       <form aria-label="Verify code">
         <label htmlFor="code">Authentication code</label>
-        <AnimatedOTP
+        <OTPField
           id="code"
           name="code"
           ref={inputRef}
@@ -39,9 +59,9 @@ describe("AnimatedOTP", () => {
     ).toBe("123456")
   })
 
-  it("supports pasting, replacing, and clearing a code", async () => {
+  it("supports pasting, replacing, and deleting a code", async () => {
     const user = userEvent.setup()
-    render(<AnimatedOTP aria-label="Verification code" />)
+    render(<OTPField aria-label="Verification code" />)
     const input = screen.getByLabelText("Verification code")
 
     await user.click(input)
@@ -60,8 +80,8 @@ describe("AnimatedOTP", () => {
     const user = userEvent.setup()
     render(
       <>
-        <AnimatedOTP aria-label="First code" maxLength={4} />
-        <AnimatedOTP aria-label="Second code" />
+        <OTPField aria-label="First code" maxLength={4} />
+        <OTPField aria-label="Second code" />
       </>
     )
     const first = screen.getByLabelText("First code")
@@ -76,24 +96,12 @@ describe("AnimatedOTP", () => {
 
   it("respects disabled input behavior", async () => {
     const user = userEvent.setup()
-    render(<AnimatedOTP aria-label="Disabled code" disabled />)
+    render(<OTPField aria-label="Disabled code" disabled />)
     const input = screen.getByLabelText("Disabled code")
 
     await user.type(input, "123456")
 
     expect(input).toBeDisabled()
     expect(input).toHaveValue("")
-  })
-
-  it("updates the controlled demo when the code changes", async () => {
-    const user = userEvent.setup()
-    render(<InputOTPDemo />)
-
-    expect(screen.getByText("Type to see the entered code")).toBeVisible()
-    await user.type(screen.getByLabelText("One-time password"), "123456")
-
-    expect(screen.getByText("Entered Code:")).toHaveTextContent(
-      "Entered Code: 123456"
-    )
   })
 })

@@ -4,7 +4,6 @@ import type * as React from "react"
 import { Link } from "react-router"
 
 import { AuthCard } from "@/components/auth-card"
-import { AnimatedOTP } from "@/components/shadcn-space/input-otp/input-otp-09"
 import { TextField } from "@/components/text-field"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +12,11 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 const TWO_FACTOR_CODE_LENGTH = 6
 
@@ -57,7 +61,7 @@ export function TwoFactorChallengeForm({
               <FieldLabel htmlFor="code" className="sr-only">
                 Authentication code
               </FieldLabel>
-              <AnimatedOTP
+              <InputOTP
                 id="code"
                 name="code"
                 maxLength={TWO_FACTOR_CODE_LENGTH}
@@ -65,7 +69,16 @@ export function TwoFactorChallengeForm({
                 autoComplete="one-time-code"
                 inputMode="numeric"
                 autoFocus
-              />
+              >
+                <InputOTPGroup>
+                  {Array.from(
+                    { length: TWO_FACTOR_CODE_LENGTH },
+                    (_, index) => (
+                      <InputOTPSlot key={index} index={index} />
+                    )
+                  )}
+                </InputOTPGroup>
+              </InputOTP>
             </Field>
           ) : (
             <TextField

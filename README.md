@@ -58,11 +58,11 @@ Typography, fields, buttons, focus states, and light/dark colors use the same
 components throughout. Replace `public/images/auth/workspace.jpg` to change
 the photo used by the split and photo frames.
 
-The two-factor screen uses the supplied `AnimatedOTP` from
-`src/components/shadcn-space/input-otp/input-otp-09.tsx`. It supports controlled
-or uncontrolled input, native input props and refs, paste, and reduced motion.
-The auth form configures six numeric digits and keeps its recovery-code mode.
-The file also exports the original standalone demo as its default export.
+The two-factor screen uses the shared shadcn `InputOTP` from
+`src/components/ui/input-otp.tsx`. Each digit has its own rounded, bordered
+slot with a gap between slots. The standard input supports paste, numeric
+codes, and one-time-code autofill. The auth form uses six digits and keeps
+its recovery-code mode.
 
 ## Swapping the dashboard shell
 
