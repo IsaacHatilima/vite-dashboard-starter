@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import { describe, expect, it, vi } from "vitest"
 
+import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { WorkspaceShell } from "./workspace-shell"
 
@@ -35,9 +36,11 @@ function renderWorkspace(assistant?: ReactNode) {
     { initialEntries: ["/dashboard"] }
   )
   render(
-    <TooltipProvider>
-      <RouterProvider router={router} />
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" disableTransitionOnChange={false}>
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
+    </ThemeProvider>
   )
   return { router, user: userEvent.setup() }
 }

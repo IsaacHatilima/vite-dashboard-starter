@@ -2,8 +2,9 @@ import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import type * as React from "react"
 import { createMemoryRouter, RouterProvider } from "react-router"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 
+import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { placeholderUser } from "@/config/app"
 import {
@@ -21,12 +22,19 @@ function renderShell(Shell: React.ComponentType<ShellProps>, path: string) {
     { initialEntries: [path] }
   )
   render(
-    <TooltipProvider>
-      <RouterProvider router={router} />
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" disableTransitionOnChange={false}>
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
+    </ThemeProvider>
   )
   return { router, user: userEvent.setup() }
 }
+
+afterEach(() => {
+  localStorage.clear()
+  document.documentElement.classList.remove("light", "dark")
+})
 
 const shells = [
   ["InsetShell", InsetShell],
@@ -73,6 +81,64 @@ describe.each(shells)("%s", (_, Shell) => {
     expect(
       screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
     ).toBeVisible()
+  })
+
+  it("changes the theme from the account menu without closing it", async () => {
+    const { user } = renderShell(Shell, "/dashboard")
+    await user.click(
+      screen.getByRole("button", { name: new RegExp(placeholderUser.name) })
+    )
+
+    const light = await screen.findByRole("menuitemradio", { name: "Light" })
+    expect(screen.getAllByRole("menuitemradio")).toHaveLength(3)
+    const dark = screen.getByRole("menuitemradio", { name: "Dark" })
+    const system = screen.getByRole("menuitemradio", { name: "System" })
+    expect(light).toHaveAttribute("aria-checked", "true")
+
+    await user.click(dark)
+    expect(dark).toHaveAttribute("aria-checked", "true")
+    expect(light).toHaveAttribute("aria-checked", "false")
+    expect(document.documentElement).toHaveClass("dark")
+    expect(localStorage.getItem("theme")).toBe("dark")
+    expect(screen.getByRole("menu")).toBeVisible()
+
+    await user.click(light)
+    expect(light).toHaveAttribute("aria-checked", "true")
+    expect(document.documentElement).toHaveClass("light")
+    expect(localStorage.getItem("theme")).toBe("light")
+
+    await user.click(system)
+    expect(system).toHaveAttribute("aria-checked", "true")
+    expect(light).toHaveAttribute("aria-checked", "false")
+    // The default test media query resolves the system preference to light.
+    expect(document.documentElement).toHaveClass("light")
+    expect(localStorage.getItem("theme")).toBe("system")
+    expect(screen.getByRole("menu")).toBeVisible()
+  })
+
+  it("supports keyboard theme selection and returns focus on Escape", async () => {
+    const { user } = renderShell(Shell, "/dashboard")
+    const trigger = screen.getByRole("button", {
+      name: new RegExp(placeholderUser.name),
+    })
+    trigger.focus()
+    await user.keyboard("{Enter}")
+    await screen.findByRole("menuitemradio", { name: "Light" })
+
+    await user.keyboard("{Home}{ArrowDown}{ArrowDown}{ArrowDown}")
+    const dark = screen.getByRole("menuitemradio", { name: "Dark" })
+    await waitFor(() => expect(dark).toHaveFocus())
+    await user.keyboard("{Enter}")
+
+    expect(dark).toHaveAttribute("aria-checked", "true")
+    expect(document.documentElement).toHaveClass("dark")
+    expect(screen.getByRole("menu")).toBeVisible()
+
+    await user.keyboard("{Escape}")
+    await waitFor(() =>
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument()
+    )
+    await waitFor(() => expect(trigger).toHaveFocus())
   })
 })
 

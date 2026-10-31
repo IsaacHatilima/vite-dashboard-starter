@@ -1,11 +1,15 @@
 import {
   ChevronsUpDownIcon,
   LogOutIcon,
+  MonitorIcon,
+  MoonIcon,
   ShieldCheckIcon,
+  SunIcon,
   UserIcon,
 } from "lucide-react"
 import { Link } from "react-router"
 
+import { useTheme } from "@/components/theme-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +18,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -23,8 +29,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { placeholderUser, type ShellUser } from "@/config/app"
 import { routes } from "@/config/routes"
+
+const themeOptions = [
+  { value: "light", label: "Light", icon: SunIcon },
+  { value: "dark", label: "Dark", icon: MoonIcon },
+  { value: "system", label: "System", icon: MonitorIcon },
+] as const
 
 export function initials(name: string): string {
   const letters = name
@@ -71,6 +88,7 @@ function RailAvatar({ user }: { user: ShellUser }) {
 
 export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
   const { isMobile } = useSidebar()
+  const { theme, setTheme } = useTheme()
   const user = placeholderUser
 
   const menu = (
@@ -120,6 +138,33 @@ export function ShellUserMenu({ compact = false }: ShellUserMenuProps) {
             <ShieldCheckIcon />
             Security
           </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuRadioGroup
+            aria-label="Theme"
+            value={theme}
+            onValueChange={setTheme}
+            className="mx-1 my-1 flex gap-1 rounded-lg bg-muted p-1"
+          >
+            {themeOptions.map(({ value, label, icon: Icon }) => (
+              <Tooltip key={value}>
+                <TooltipTrigger
+                  render={
+                    <DropdownMenuRadioItem
+                      value={value}
+                      aria-label={label}
+                      label={label}
+                      className="h-9 flex-1 justify-center px-0 focus-visible:ring-2 focus-visible:ring-ring data-checked:bg-popover data-checked:shadow-xs [&>[data-slot=dropdown-menu-radio-item-indicator]]:hidden"
+                    />
+                  }
+                >
+                  <Icon />
+                </TooltipTrigger>
+                <TooltipContent>{label}</TooltipContent>
+              </Tooltip>
+            ))}
+          </DropdownMenuRadioGroup>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

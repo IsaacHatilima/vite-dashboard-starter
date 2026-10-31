@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { createMemoryRouter, RouterProvider } from "react-router"
 import { expect } from "vitest"
 
+import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { appRoutes } from "@/router"
 
@@ -12,9 +13,11 @@ export function renderApp(path: string) {
   const user = userEvent.setup()
 
   render(
-    <TooltipProvider>
-      <RouterProvider router={router} />
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="light" disableTransitionOnChange={false}>
+      <TooltipProvider>
+        <RouterProvider router={router} />
+      </TooltipProvider>
+    </ThemeProvider>
   )
 
   return { router, user }
