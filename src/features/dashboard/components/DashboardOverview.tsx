@@ -18,6 +18,7 @@ import {
   StackHeader,
 } from "@/components/ui/stacked-card"
 import { routes } from "@/config/routes"
+import CommandSection from "@/features/dashboard/components/CommandSection"
 import DialogsSection from "@/features/dashboard/components/DialogsSection.tsx"
 
 
@@ -173,6 +174,7 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
         </div>
       </section>
       <DialogsSection/>
+      <CommandSection />
     </>
   )
 }

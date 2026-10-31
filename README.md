@@ -254,6 +254,29 @@ children. Escape and Close restore trigger focus. The overlay dims the page
 without blur. The dashboard composes these same parts as a workspace-guide
 example; there is no feature-specific dialog wrapper.
 
+## Commands
+
+The shared shadcn command components live in `src/components/ui/command.tsx`.
+`CommandDialog` accepts `stack`, which defaults to `false` and uses the same
+layered edge as `Dialog` and `Drawer`:
+
+```tsx
+<CommandDialog open={open} onOpenChange={setOpen} stack>
+  <Command>
+    <CommandInput placeholder="Search commands…" />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup heading="Pages">
+        <CommandItem onSelect={openProjects}>Projects</CommandItem>
+      </CommandGroup>
+    </CommandList>
+  </Command>
+</CommandDialog>
+```
+
+Review **Default command** and **Stacked command** under **Commands** on the
+dashboard. Both support filtering, arrow-key selection, and navigation.
+
 ## Drawers
 
 To review the examples, open `/dashboard` and scroll to **Drawers**. The
