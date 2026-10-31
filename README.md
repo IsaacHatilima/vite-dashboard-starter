@@ -276,6 +276,34 @@ React children. Put long content in a `min-h-0 flex-1 overflow-y-auto` region
 between them to keep actions visible. The body is positioned for the documented
 iOS Safari overlay behavior.
 
+## Sheets
+
+Open `/dashboard` and scroll to **Sheets** to review **Open right sheet**.
+The example keeps the overlay visible while allowing the page counter to work.
+
+```tsx
+<Sheet modal={false} disablePointerDismissal>
+  <SheetTrigger render={<Button />}>Open right sheet</SheetTrigger>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>Sheet preview</SheetTitle>
+      <SheetDescription>The page remains interactive.</SheetDescription>
+    </SheetHeader>
+    <div className="min-h-0 flex-1 overflow-y-auto p-4">Your content</div>
+    <SheetFooter>
+      <SheetClose render={<Button variant="outline" />}>Close sheet</SheetClose>
+    </SheetFooter>
+  </SheetContent>
+</Sheet>
+```
+
+Import the `Sheet*` parts from `@/components/ui/sheet`. `side="right"` is the
+content default. `modal={false}` allows background focus, scrolling, and clicks;
+its overlay dims the page but lets pointer events pass through.
+`disablePointerDismissal` keeps the sheet open during outside interactions.
+Sheet stays modal by default for existing mobile navigation and assistant usage.
+All sheet overlays use the shared theme dimming without blur.
+
 ## Adding features
 
 Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver); see

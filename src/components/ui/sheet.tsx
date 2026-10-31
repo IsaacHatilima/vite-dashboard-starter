@@ -5,8 +5,15 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import { XIcon } from "lucide-react"
 
-function Sheet({ ...props }: SheetPrimitive.Root.Props) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+const SheetModalContext =
+  React.createContext<SheetPrimitive.Root.Props["modal"]>(true)
+
+function Sheet({ modal = true, ...props }: SheetPrimitive.Root.Props) {
+  return (
+    <SheetModalContext value={modal}>
+      <SheetPrimitive.Root data-slot="sheet" modal={modal} {...props} />
+    </SheetModalContext>
+  )
 }
 
 function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
@@ -22,11 +29,14 @@ function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
+  const modal = React.useContext(SheetModalContext)
+
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-50 bg-dialog-overlay transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0",
+        modal !== true && "pointer-events-none",
         className
       )}
       {...props}
