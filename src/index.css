@@ -54,7 +54,7 @@
   /* Light surfaces: container and navigation panel, icon rail, then cards.
      Hover and selected fills remain translucent over each surface. */
   color-scheme: light;
-  --background: #fcfcfc;
+  --background: #f7f7f7;
   --foreground: #0d0d0d;
   --card: #ffffff;
   --card-foreground: #0d0d0d;
