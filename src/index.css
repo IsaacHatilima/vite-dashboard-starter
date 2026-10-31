@@ -55,8 +55,8 @@
 }
 
 :root {
-  /* Body and navigation share one canvas. RailShell's icon section has its
-     own surface; cards sit above both. Hover and selected fills are translucent. */
+  /* Sidebars and RailShell's icons share a surface. The page and RailShell's
+     navigation panel use the body canvas; hover and selected fills are translucent. */
   color-scheme: light;
   --background: #fcfcfc;
   --foreground: #0d0d0d;
@@ -87,10 +87,10 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: var(--background);
+  --sidebar: #f9f9f9;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--background);
-  --sidebar-rail: #f9f9f9;
+  --sidebar-rail: var(--sidebar);
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
   --sidebar-muted-foreground: #8f8f8f;
