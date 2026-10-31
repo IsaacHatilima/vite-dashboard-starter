@@ -1,4 +1,4 @@
-import { PanelRightIcon } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { Link } from "react-router"
 
 import {
@@ -54,15 +54,14 @@ export function WorkspaceHeader({
         <WorkspaceSearch />
         <Button
           id="workspace-assistant-toggle"
-          variant="ghost"
+          variant="default"
+          size="icon-lg"
           aria-label="Toggle assistant"
           aria-expanded={assistantOpen}
           aria-controls="workspace-assistant"
           onClick={onAssistantToggle}
-          className="size-9 sm:w-auto sm:px-3"
         >
-          <PanelRightIcon data-icon="inline-start" strokeWidth={1.5} />
-          <span className="hidden sm:inline">Assistant</span>
+          <Sparkles strokeWidth={1.5} />
         </Button>
       </div>
     </header>
