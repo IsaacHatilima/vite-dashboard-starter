@@ -279,8 +279,10 @@ iOS Safari overlay behavior.
 ## Sheets
 
 Open `/dashboard` and scroll to **Sheets**. **Normal sheet** traps focus and
-blocks the page; **Non-modal sheet** keeps the overlay visible while allowing
-the page counter to work. Both open from the right.
+blocks the page with a dim overlay; **Non-modal sheet** has no overlay and keeps
+the page interactive. Both open from the right. The non-modal panel matches the
+Gr8r task sheet: full height, flush to the edge, a subtle left border and shadow,
+and a 620px width that fits smaller viewports.
 
 ```tsx
 <Sheet modal={false} disablePointerDismissal>
@@ -299,11 +301,11 @@ the page counter to work. Both open from the right.
 ```
 
 Import the `Sheet*` parts from `@/components/ui/sheet`. `side="right"` is the
-content default. `modal={false}` allows background focus, scrolling, and clicks;
-its overlay dims the page but lets pointer events pass through.
+content default. `modal={false}` omits the overlay and allows background focus,
+scrolling, and clicks.
 `disablePointerDismissal` keeps the sheet open during outside interactions.
 Sheet stays modal by default for existing mobile navigation and assistant usage.
-All sheet overlays use the shared theme dimming without blur.
+Modal sheet overlays use the shared theme dimming without blur.
 
 ## Adding features
 

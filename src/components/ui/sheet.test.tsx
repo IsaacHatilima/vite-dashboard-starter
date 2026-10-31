@@ -83,7 +83,7 @@ describe("shared Sheet", () => {
     await waitFor(() => expect(trigger).toHaveFocus())
   })
 
-  it("retains an overlay while allowing background interaction in non-modal mode", async () => {
+  it("omits the overlay while allowing background interaction in non-modal mode", async () => {
     const user = userEvent.setup()
     render(<ProjectSheet modal={false} />)
 
@@ -91,8 +91,9 @@ describe("shared Sheet", () => {
     const sheet = await screen.findByRole("dialog", {
       name: "Project details",
     })
-    const overlay = document.querySelector('[data-slot="sheet-overlay"]')
-    expect(overlay).toBeInTheDocument()
+    expect(
+      document.querySelector('[data-slot="sheet-overlay"]')
+    ).not.toBeInTheDocument()
     await waitFor(() =>
       expect(within(sheet).getByLabelText("Project name")).toHaveFocus()
     )
@@ -106,7 +107,9 @@ describe("shared Sheet", () => {
     await user.type(screen.getByLabelText("Page notes"), "Keep working")
     expect(screen.getByLabelText("Page notes")).toHaveValue("Keep working")
     expect(sheet).toBeVisible()
-    expect(overlay).toBeInTheDocument()
+    expect(
+      document.querySelector('[data-slot="sheet-overlay"]')
+    ).not.toBeInTheDocument()
 
     await user.click(within(sheet).getByRole("button", { name: "Done" }))
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())

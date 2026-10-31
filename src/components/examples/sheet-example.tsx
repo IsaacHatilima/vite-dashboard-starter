@@ -23,7 +23,8 @@ const modes = [
   {
     label: "Non-modal sheet",
     modal: false,
-    description: "The page stays interactive while this sheet is open.",
+    description:
+      "No overlay. Keep working on the page while this panel is open.",
   },
 ] as const
 
