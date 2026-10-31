@@ -307,6 +307,18 @@ scrolling, and clicks.
 Sheet stays modal by default for existing mobile navigation and assistant usage.
 Modal sheet overlays use the shared theme dimming without blur.
 
+## Toasts
+
+The shared Sonner `Toaster` is mounted once in `App`, uses the current app theme,
+and displays toasts at the bottom centre across all auth and dashboard shells.
+Trigger a toast from any component:
+
+```tsx
+import { toast } from "sonner"
+
+toast.success("Changes saved")
+```
+
 ## Adding features
 
 Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver); see
