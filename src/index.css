@@ -50,11 +50,11 @@
 }
 
 :root {
-  /* ChatGPT's palette, read from chatgpt.com. Surfaces step from the shell
-     (sidebar) to the page to raised cards. Hover and selected fills are
-     translucent, so they land on the same shade over any surface. */
+  /* Shared surface hierarchy: sidebar, page canvas, then raised cards.
+     Keep enough separation for cards to read without a border. Hover and
+     selected fills remain translucent over each surface. */
   color-scheme: light;
-  --background: #fcfcfc;
+  --background: #f2f2f2;
   --foreground: #0d0d0d;
   --card: #ffffff;
   --card-foreground: #0d0d0d;
@@ -78,7 +78,7 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: #f9f9f9;
+  --sidebar: #eaeaea;
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
   --sidebar-muted-foreground: #8f8f8f;
