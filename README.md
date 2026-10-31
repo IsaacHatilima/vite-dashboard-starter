@@ -73,6 +73,31 @@ Add, rename or reorder nav items in `src/config/navigation.ts` and every shell
 picks them up. Add the matching route in `src/router.tsx`. The name and email
 in the user menu come from `placeholderUser` in `src/config/app.ts`.
 
+## Cards
+
+`Card` keeps its standard shadcn composition and accepts `border`, which defaults
+to `true`. Use `<Card border={false}>` to remove its outer outline.
+
+`StackedCard` adds a muted backing surface around an inner `Card`, with optional
+`top` and `bottom` content. Supply either slot or both; omitted slots take no space.
+The standard Card parts go directly inside it:
+
+```tsx
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StackedCard } from "@/components/ui/stacked-card"
+
+<StackedCard top="Sales trend" bottom="Monthly overview">
+  <CardHeader>
+    <CardTitle>Revenue</CardTitle>
+  </CardHeader>
+  <CardContent>Your chart or other content</CardContent>
+</StackedCard>
+```
+
+Both slots accept any React content, including toolbars and buttons. Normal div
+attributes, refs, and `className` apply to the outer frame. The dashboard shows
+top-only, bottom-only, and combined examples in both themes.
+
 ## Adding features
 
 Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver); see

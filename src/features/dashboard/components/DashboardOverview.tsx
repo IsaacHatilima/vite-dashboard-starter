@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { StackedCard } from "@/components/ui/stacked-card"
 
 interface DashboardOverviewProps {
   userName: string
@@ -42,7 +43,58 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
           </CardContent>
         </Card>
       </section>
-      <div className="min-h-[60vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+      <section
+        aria-labelledby="stacked-cards-title"
+        className="flex flex-col gap-4"
+      >
+        <h2 id="stacked-cards-title" className="text-sm font-medium">
+          Stacked cards
+        </h2>
+        <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <StackedCard top="Top band">
+            <CardHeader>
+              <CardTitle>Top only</CardTitle>
+              <CardDescription>
+                A title or toolbar above the card.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                The outer surface frames the header while the content sits on
+                its own raised card.
+              </p>
+            </CardContent>
+          </StackedCard>
+          <StackedCard bottom="Bottom band">
+            <CardHeader>
+              <CardTitle>Bottom only</CardTitle>
+              <CardDescription>
+                Supporting context below the card.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Use the lower band for a summary, metadata, or actions related
+                to the content above.
+              </p>
+            </CardContent>
+          </StackedCard>
+          <StackedCard top="Top band" bottom="Bottom band">
+            <CardHeader>
+              <CardTitle>Top and bottom</CardTitle>
+              <CardDescription>
+                Two bands around one raised card.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Put the title or controls above, and keep related details or
+                actions below.
+              </p>
+            </CardContent>
+          </StackedCard>
+        </div>
+      </section>
     </>
   )
 }
