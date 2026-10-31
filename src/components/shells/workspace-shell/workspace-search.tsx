@@ -5,6 +5,7 @@ import { Link } from "react-router"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -83,6 +84,7 @@ export function WorkspaceSearch() {
           <DialogDescription>Find a page in your workspace.</DialogDescription>
         </DialogHeader>
         <Input
+          className="shrink-0"
           ref={inputRef}
           type="search"
           aria-label="Search workspace pages"
@@ -90,42 +92,44 @@ export function WorkspaceSearch() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
-        <nav aria-label="Search results" className="max-h-80 overflow-y-auto">
-          {results.length ? (
-            <ul className="flex flex-col gap-1">
-              {results.map((item) => (
-                <li key={item.url}>
-                  <Link
-                    to={item.url}
-                    className={buttonVariants({
-                      variant: "ghost",
-                      className: "h-auto w-full justify-start py-2",
-                    })}
-                    onClick={() => changeOpen(false)}
-                  >
-                    <item.section.icon data-icon="inline-start" />
-                    <span className="flex min-w-0 flex-1 flex-col items-start">
-                      <span>{item.title}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {item.section.title}
+        <DialogBody className="max-h-80">
+          <nav aria-label="Search results">
+            {results.length ? (
+              <ul className="flex flex-col gap-1">
+                {results.map((item) => (
+                  <li key={item.url}>
+                    <Link
+                      to={item.url}
+                      className={buttonVariants({
+                        variant: "ghost",
+                        className: "h-auto w-full justify-start py-2",
+                      })}
+                      onClick={() => changeOpen(false)}
+                    >
+                      <item.section.icon data-icon="inline-start" />
+                      <span className="flex min-w-0 flex-1 flex-col items-start">
+                        <span>{item.title}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {item.section.title}
+                        </span>
                       </span>
-                    </span>
-                    <ArrowUpRightIcon data-icon="inline-end" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <Empty>
-              <EmptyHeader>
-                <EmptyTitle>No pages found</EmptyTitle>
-                <EmptyDescription>
-                  Try a different page or section name.
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          )}
-        </nav>
+                      <ArrowUpRightIcon data-icon="inline-end" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>No pages found</EmptyTitle>
+                  <EmptyDescription>
+                    Try a different page or section name.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            )}
+          </nav>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   )

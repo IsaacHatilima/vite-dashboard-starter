@@ -146,24 +146,49 @@ working controls in both themes.
 
 ## Dialogs
 
-The dashboard includes a `StickyFooterDialog` example using the existing shadcn
-Dialog parts and the documented [sticky-footer pattern](https://ui.shadcn.com/docs/components/base/dialog#sticky-footer).
-Only the content region scrolls; the header, close control, and footer remain
-visible inside a popup bounded to the viewport. Escape and the footer's Close
-button dismiss it and return focus to the trigger.
+Dialog behavior lives in `src/components/ui/dialog.tsx`, alongside Card and
+StackedCard. Compose the shared parts anywhere in the app:
 
-When composing another dialog, put `overflow-y-auto` and a maximum height on the
-body region, with `min-h-0` inside a height-constrained flex column. Keep
-`DialogHeader` and `DialogFooter` as non-scrolling siblings.
+```tsx
+import {
+  Dialog,
+  DialogBody,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
-Use `<DialogContent stack>` (or `stack={true}`) for a layered edge: a backing
-frame with an inner and outer hairline. It defaults to `false` for the standard
-dialog surface. The dashboard's sticky-footer example enables it. Dialog
-overlays dim the page without blurring it, with a stronger dim in dark mode.
+;<Dialog stack>
+  <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Project details</DialogTitle>
+      <DialogDescription>
+        Review the project and its settings.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogBody>Your content, inputs, or other components</DialogBody>
+    <DialogFooter>
+      <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
 
-`StickyFooterDialog` forwards the same flag:
-`<StickyFooterDialog stack />` enables the layered edge;
-`<StickyFooterDialog stack={false} />` disables it. It defaults to `false`.
+`stack` defaults to `false`. Enable it on `Dialog` for a layered edge, or use
+`stack={false}` for the standard surface. `DialogContent` also accepts an
+explicit `stack` override for existing usage.
+
+`DialogContent` stays within the viewport. `DialogBody` scrolls while
+`DialogHeader` and `DialogFooter` stay visible; each accepts arbitrary React
+children. Escape and Close restore trigger focus. The overlay dims the page
+without blur. The dashboard composes these same parts as a workspace-guide
+example; there is no feature-specific dialog wrapper.
 
 ## Adding features
 
