@@ -112,6 +112,7 @@
   --secondary-foreground: #0d0d0d;
   --muted: rgb(0 0 0 / 5%);
   --muted-foreground: #5d5d5d;
+  --scrollbar-thumb: rgb(0 0 0 / 20%);
   --accent: rgb(0 0 0 / 5%);
   --accent-foreground: #0d0d0d;
   --destructive: oklch(0.577 0.245 27.325);
@@ -164,6 +165,7 @@
   --secondary-foreground: #ededed;
   --muted: rgb(255 255 255 / 10%);
   --muted-foreground: #cdcdcd;
+  --scrollbar-thumb: rgb(255 255 255 / 20%);
   --accent: rgb(255 255 255 / 10%);
   --accent-foreground: #ededed;
   --destructive: oklch(0.704 0.191 22.216);
@@ -193,6 +195,22 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 999px;
   }
   body {
     @apply relative bg-background text-foreground;

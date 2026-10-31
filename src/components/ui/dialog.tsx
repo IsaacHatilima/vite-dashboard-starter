@@ -66,7 +66,7 @@ function DialogContent({
         data-slot="dialog-content"
         data-stack={stacked}
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-(--field-gap) overflow-hidden rounded-xl bg-popover p-4 text-sm text-popover-foreground duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 no-scrollbar flex max-h-[calc(100svh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-(--field-gap) overflow-hidden rounded-xl bg-popover p-4 text-sm text-popover-foreground duration-100 outline-none **:no-scrollbar sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           stacked
             ? "rounded-2xl shadow-(--dialog-stack-shadow)"
             : "ring-1 ring-foreground/10",
