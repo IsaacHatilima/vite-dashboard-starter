@@ -6,6 +6,7 @@ type DrawerContextProps = {
   hasSnapPoints: boolean
   modal: DrawerPrimitive.Root.Props["modal"]
   showSwipeHandle: boolean
+  stack: boolean
   swipeDirection: NonNullable<DrawerPrimitive.Root.Props["swipeDirection"]>
 }
 
@@ -25,15 +26,18 @@ function Drawer({
   modal = true,
   showSwipeHandle = false,
   snapPoints,
+  stack = false,
   swipeDirection = "right",
   ...props
 }: DrawerPrimitive.Root.Props & {
   showSwipeHandle?: boolean
+  /** Adds the same layered edge as Dialog's stack option. */
+  stack?: boolean
 }) {
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0
   const contextValue = React.useMemo(
-    () => ({ hasSnapPoints, modal, showSwipeHandle, swipeDirection }),
-    [hasSnapPoints, modal, showSwipeHandle, swipeDirection]
+    () => ({ hasSnapPoints, modal, showSwipeHandle, stack, swipeDirection }),
+    [hasSnapPoints, modal, showSwipeHandle, stack, swipeDirection]
   )
 
   return (
@@ -97,9 +101,17 @@ function DrawerSwipeHandle({
 function DrawerContent({
   className,
   children,
+  stack,
   ...props
-}: DrawerPrimitive.Popup.Props) {
-  const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer()
+}: DrawerPrimitive.Popup.Props & { stack?: boolean }) {
+  const {
+    hasSnapPoints,
+    modal,
+    showSwipeHandle,
+    stack: inheritedStack,
+    swipeDirection,
+  } = useDrawer()
+  const stacked = stack ?? inheritedStack
   const swipeAxis =
     swipeDirection === "down" || swipeDirection === "up" ? "y" : "x"
 
@@ -115,6 +127,7 @@ function DrawerContent({
       >
         <DrawerPrimitive.Popup
           data-slot="drawer-popup"
+          data-stack={stacked}
           data-swipe-axis={swipeAxis}
           data-snap-points={hasSnapPoints ? "" : undefined}
           className={cn(
@@ -142,6 +155,7 @@ function DrawerContent({
             "data-[swipe-direction=left]:left-0 data-[swipe-direction=left]:origin-left data-[swipe-direction=left]:[--closed-transform:translate3d(calc(-100%-var(--drawer-inset,0px)-2px),0,0)] data-[swipe-direction=left]:[--translate-x:calc(var(--drawer-swipe-movement-x)+var(--stack-peek-offset)+(var(--stack-shrink)*100%))]",
             // Direction: right.
             "data-[swipe-direction=right]:right-0 data-[swipe-direction=right]:origin-right data-[swipe-direction=right]:[--closed-transform:translate3d(calc(100%+var(--drawer-inset,0px)+2px),0,0)] data-[swipe-direction=right]:[--translate-x:calc(var(--drawer-swipe-movement-x)-var(--stack-peek-offset)-(var(--stack-shrink)*100%))]",
+            stacked && "rounded-2xl border-0 shadow-(--dialog-stack-shadow)",
             className
           )}
           {...props}

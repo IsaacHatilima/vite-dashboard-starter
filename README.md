@@ -257,18 +257,23 @@ example; there is no feature-specific dialog wrapper.
 ## Drawers
 
 To review the examples, open `/dashboard` and scroll to **Drawers**. The
-**Default drawer**, **Nested drawers**, and **Non-modal drawer** buttons open
-interactive demos of each mode.
+**Default drawer**, **Stacked drawer**, **Nested drawers**, and **Non-modal drawer**
+buttons open interactive demos of each mode.
 
 The shared Base UI drawer is installed at `src/components/ui/drawer.tsx`.
 It uses the app's clear, dimmed overlay and supports the native shadcn/Base UI
-props:
+props, plus the shared `stack` option:
 
 ```tsx
 <Drawer>...</Drawer>                                      // modal by default
+<Drawer stack>...</Drawer>                                // layered edge, like Dialog
 <Drawer modal={false}>...</Drawer>                        // background stays interactive
 <Drawer modal={false} disablePointerDismissal>...</Drawer> // stays open on outside presses
 ```
+
+`stack` defaults to `false`. Enable it on `Drawer` for the same layered edge as
+`Dialog stack`. `DrawerContent` accepts an explicit `stack` override as well.
+Try **Stacked drawer** on the dashboard to preview it.
 
 Nesting is detected automatically. Place another `Drawer` inside the parent's
 `DrawerContent`; opening it stacks the parent behind it, and closing it returns

@@ -24,32 +24,41 @@ export function DrawerExamples() {
         Drawers
       </h2>
       <div className="flex flex-wrap gap-3">
-        <Drawer>
-          <DrawerTrigger render={<Button variant="outline" />}>
-            Default drawer
-          </DrawerTrigger>
-          <DrawerContent>
-            <div className="mx-auto flex min-h-0 w-full max-w-lg flex-1 flex-col">
-              <DrawerHeader>
-                <DrawerTitle>Drawer preview</DrawerTitle>
-                <DrawerDescription>
-                  A modal drawer with a dimmed background.
-                </DrawerDescription>
-              </DrawerHeader>
-              <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                <p className="text-sm text-muted-foreground">
-                  Focus stays inside this drawer. Close it with the button or
-                  Escape.
-                </p>
+        {[
+          { label: "Default drawer", stack: false },
+          { label: "Stacked drawer", stack: true },
+        ].map(({ label, stack }) => (
+          <Drawer key={label} stack={stack}>
+            <DrawerTrigger render={<Button variant="outline" />}>
+              {label}
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto flex min-h-0 w-full max-w-lg flex-1 flex-col">
+                <DrawerHeader>
+                  <DrawerTitle>
+                    {stack ? "Stacked drawer" : "Drawer preview"}
+                  </DrawerTitle>
+                  <DrawerDescription>
+                    {stack
+                      ? "A layered frame around your workspace details."
+                      : "A modal drawer with a dimmed background."}
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                  <p className="text-sm text-muted-foreground">
+                    Focus stays inside this drawer. Close it with the button or
+                    Escape.
+                  </p>
+                </div>
+                <DrawerFooter>
+                  <DrawerClose render={<Button variant="outline" />}>
+                    Close drawer
+                  </DrawerClose>
+                </DrawerFooter>
               </div>
-              <DrawerFooter>
-                <DrawerClose render={<Button variant="outline" />}>
-                  Close drawer
-                </DrawerClose>
-              </DrawerFooter>
-            </div>
-          </DrawerContent>
-        </Drawer>
+            </DrawerContent>
+          </Drawer>
+        ))}
 
         <Drawer>
           <DrawerTrigger render={<Button variant="outline" />}>

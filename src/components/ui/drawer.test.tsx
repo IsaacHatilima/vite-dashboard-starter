@@ -18,9 +18,13 @@ import {
 function ProjectDrawer({
   modal = true,
   disablePointerDismissal = false,
+  stack,
+  contentStack,
 }: {
   modal?: boolean
   disablePointerDismissal?: boolean
+  stack?: boolean
+  contentStack?: boolean
 }) {
   const [count, setCount] = useState(0)
 
@@ -29,9 +33,13 @@ function ProjectDrawer({
       <button onClick={() => setCount((value) => value + 1)}>
         Background action {count}
       </button>
-      <Drawer modal={modal} disablePointerDismissal={disablePointerDismissal}>
+      <Drawer
+        modal={modal}
+        disablePointerDismissal={disablePointerDismissal}
+        stack={stack}
+      >
         <DrawerTrigger render={<Button />}>Open project</DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent stack={contentStack}>
           <DrawerHeader>
             <DrawerTitle>Project details</DrawerTitle>
             <DrawerDescription>Review the project.</DrawerDescription>
@@ -88,33 +96,60 @@ function NestedDrawers() {
 }
 
 describe("shared Drawer", () => {
-  it("opens a modal drawer, accepts input, and restores focus on Close and Escape", async () => {
-    const user = userEvent.setup()
-    render(<ProjectDrawer />)
-    const trigger = screen.getByRole("button", { name: "Open project" })
+  it.each([
+    {
+      label: "default",
+      stack: undefined,
+      contentStack: undefined,
+      stacked: false,
+    },
+    { label: "stacked", stack: true, contentStack: undefined, stacked: true },
+    {
+      label: "content opt-out",
+      stack: true,
+      contentStack: false,
+      stacked: false,
+    },
+    {
+      label: "content opt-in",
+      stack: false,
+      contentStack: true,
+      stacked: true,
+    },
+  ])(
+    "opens a $label modal drawer, accepts input, and restores focus on Close and Escape",
+    async ({ stack, contentStack, stacked }) => {
+      const user = userEvent.setup()
+      render(<ProjectDrawer stack={stack} contentStack={contentStack} />)
+      const trigger = screen.getByRole("button", { name: "Open project" })
 
-    await user.click(trigger)
-    const drawer = await screen.findByRole("dialog", {
-      name: "Project details",
-    })
-    expect(drawer).toHaveAttribute("data-swipe-direction", "right")
-    expect(
-      document.querySelector('[data-slot="drawer-overlay"]')
-    ).not.toBeNull()
-    await user.clear(within(drawer).getByLabelText("Project name"))
-    await user.type(within(drawer).getByLabelText("Project name"), "Launch")
-    expect(within(drawer).getByLabelText("Project name")).toHaveValue("Launch")
+      await user.click(trigger)
+      const drawer = await screen.findByRole("dialog", {
+        name: "Project details",
+      })
+      expect(drawer).toHaveAttribute("data-swipe-direction", "right")
+      expect(drawer).toHaveAttribute("data-stack", String(stacked))
+      expect(drawer).not.toHaveAttribute("stack")
+      expect(
+        document.querySelector('[data-slot="drawer-overlay"]')
+      ).not.toBeNull()
+      await user.clear(within(drawer).getByLabelText("Project name"))
+      await user.type(within(drawer).getByLabelText("Project name"), "Launch")
+      expect(within(drawer).getByLabelText("Project name")).toHaveValue(
+        "Launch"
+      )
 
-    await user.click(within(drawer).getByRole("button", { name: "Done" }))
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
-    await waitFor(() => expect(trigger).toHaveFocus())
+      await user.click(within(drawer).getByRole("button", { name: "Done" }))
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+      await waitFor(() => expect(trigger).toHaveFocus())
 
-    await user.click(trigger)
-    await screen.findByRole("dialog", { name: "Project details" })
-    await user.keyboard("{Escape}")
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
-    await waitFor(() => expect(trigger).toHaveFocus())
-  })
+      await user.click(trigger)
+      await screen.findByRole("dialog", { name: "Project details" })
+      await user.keyboard("{Escape}")
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+      await waitFor(() => expect(trigger).toHaveFocus())
+    }
+  )
 
   it("closes only the nested drawer and preserves the parent draft and trigger focus", async () => {
     const user = userEvent.setup()
