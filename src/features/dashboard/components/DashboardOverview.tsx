@@ -1,3 +1,7 @@
+import { useState } from "react"
+import { Link } from "react-router"
+
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -5,7 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { StackedCard } from "@/components/ui/stacked-card"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import {
+  StackContent,
+  StackedCard,
+  StackFooter,
+  StackHeader,
+} from "@/components/ui/stacked-card"
+import { routes } from "@/config/routes"
 
 interface DashboardOverviewProps {
   userName: string
@@ -13,6 +25,9 @@ interface DashboardOverviewProps {
 
 // Starter examples; swap in real widgets as the dashboard grows.
 export function DashboardOverview({ userName }: DashboardOverviewProps) {
+  const [showDetails, setShowDetails] = useState(false)
+  const [projectName, setProjectName] = useState("")
+
   return (
     <>
       <h1 className="sr-only">Overview</h1>
@@ -50,48 +65,108 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
         <h2 id="stacked-cards-title" className="text-sm font-medium">
           Stacked cards
         </h2>
-        <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
-          <StackedCard top="Top band">
-            <CardHeader>
-              <CardTitle>Top only</CardTitle>
-              <CardDescription>
-                A title or toolbar above the card.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                The outer surface frames the header while the content sits on
-                its own raised card.
-              </p>
-            </CardContent>
+        <div className="grid auto-rows-fr items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <StackedCard top>
+            <StackHeader>
+              <span className="flex-1 font-medium">Quick actions</span>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-expanded={showDetails}
+                aria-controls="stacked-card-details"
+                onClick={() => setShowDetails((visible) => !visible)}
+              >
+                {showDetails ? "Hide details" : "Show details"}
+              </Button>
+            </StackHeader>
+            <StackContent>
+              <CardHeader>
+                <CardTitle>Top only</CardTitle>
+                <CardDescription>A toolbar above the card.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  The inner card expands to fill the height when there is no
+                  bottom band.
+                </p>
+                <p
+                  id="stacked-card-details"
+                  hidden={!showDetails}
+                  className="text-sm leading-relaxed text-muted-foreground"
+                >
+                  Header and footer sections can contain buttons, inputs, or
+                  other components.
+                </p>
+              </CardContent>
+            </StackContent>
           </StackedCard>
-          <StackedCard bottom="Bottom band">
-            <CardHeader>
-              <CardTitle>Bottom only</CardTitle>
-              <CardDescription>
-                Supporting context below the card.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Use the lower band for a summary, metadata, or actions related
-                to the content above.
-              </p>
-            </CardContent>
+          <StackedCard bottom>
+            <StackContent>
+              <CardHeader>
+                <CardTitle>Bottom only</CardTitle>
+                <CardDescription>Actions below the card.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  The card fills the remaining space above a footer with
+                  supporting context and actions.
+                </p>
+              </CardContent>
+            </StackContent>
+            <StackFooter>
+              <span className="flex-1">Explore your work</span>
+              <Link
+                to={routes.projects}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                View projects
+              </Link>
+            </StackFooter>
           </StackedCard>
-          <StackedCard top="Top band" bottom="Bottom band">
-            <CardHeader>
-              <CardTitle>Top and bottom</CardTitle>
-              <CardDescription>
-                Two bands around one raised card.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Put the title or controls above, and keep related details or
-                actions below.
-              </p>
-            </CardContent>
+          <StackedCard top bottom>
+            <StackHeader>
+              <Field className="min-w-0 flex-1">
+                <FieldLabel htmlFor="stacked-card-project" className="sr-only">
+                  Project name
+                </FieldLabel>
+                <Input
+                  id="stacked-card-project"
+                  placeholder="Project name"
+                  value={projectName}
+                  onChange={(event) => setProjectName(event.target.value)}
+                />
+              </Field>
+            </StackHeader>
+            <StackContent>
+              <CardHeader>
+                <CardTitle>Top and bottom</CardTitle>
+                <CardDescription>
+                  An input above and actions below.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p
+                  id="stacked-card-project-preview"
+                  className="text-sm leading-relaxed text-muted-foreground"
+                >
+                  Project:{" "}
+                  <span className="font-medium text-foreground">
+                    {projectName || "Untitled project"}
+                  </span>
+                </p>
+              </CardContent>
+            </StackContent>
+            <StackFooter>
+              <span className="flex-1">Preview controls</span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!projectName}
+                onClick={() => setProjectName("")}
+              >
+                Reset
+              </Button>
+            </StackFooter>
           </StackedCard>
         </div>
       </section>

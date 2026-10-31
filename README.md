@@ -78,25 +78,42 @@ in the user menu come from `placeholderUser` in `src/config/app.ts`.
 `Card` keeps its standard shadcn composition and accepts `border`, which defaults
 to `true`. Use `<Card border={false}>` to remove its outer outline.
 
-`StackedCard` adds a muted backing surface around an inner `Card`, with optional
-`top` and `bottom` content. Supply either slot or both; omitted slots take no space.
-The standard Card parts go directly inside it:
+`StackedCard` adds a muted backing surface with composable sections. Enable its
+header with `top`, its footer with `bottom`, or both. Both flags default to
+`false`; disabled sections render nothing. `StackHeader` and `StackFooter`
+accept any React children, including buttons and inputs. `StackContent` is the
+raised inner Card and accepts the standard Card props and parts:
 
 ```tsx
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StackedCard } from "@/components/ui/stacked-card"
+import { Button } from "@/components/ui/button"
+import {
+  StackedCard,
+  StackHeader,
+  StackContent,
+  StackFooter,
+} from "@/components/ui/stacked-card"
 
-<StackedCard top="Sales trend" bottom="Monthly overview">
-  <CardHeader>
-    <CardTitle>Revenue</CardTitle>
-  </CardHeader>
-  <CardContent>Your chart or other content</CardContent>
+<StackedCard top bottom>
+  <StackHeader>Sales trend</StackHeader>
+  <StackContent>
+    <CardHeader>
+      <CardTitle>Revenue</CardTitle>
+    </CardHeader>
+    <CardContent>Your chart or other content</CardContent>
+  </StackContent>
+  <StackFooter>
+    <span>Monthly overview</span>
+    <Button size="sm">Export</Button>
+  </StackFooter>
 </StackedCard>
 ```
 
-Both slots accept any React content, including toolbars and buttons. Normal div
-attributes, refs, and `className` apply to the outer frame. The dashboard shows
-top-only, bottom-only, and combined examples in both themes.
+Normal div attributes, refs, and `className` apply to the outer frame and bands.
+Place siblings in a stretching grid (`grid auto-rows-fr items-stretch`) to give
+them equal overall heights. `StackContent` expands into the space left when a
+header or footer is absent. The dashboard shows all three combinations with
+working controls in both themes.
 
 ## Adding features
 
