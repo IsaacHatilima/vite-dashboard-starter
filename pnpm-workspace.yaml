@@ -1,0 +1,6 @@
+packages: []
+
+allowBuilds:
+  domain-driver: true
+  esbuild: true
+  msw: false
