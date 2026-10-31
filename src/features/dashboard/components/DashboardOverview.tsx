@@ -1,8 +1,16 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
 interface DashboardOverviewProps {
   userName: string
 }
 
-// Placeholder tiles from the shadcn sidebar blocks; swap in real widgets.
+// Starter examples; swap in real widgets as the dashboard grows.
 export function DashboardOverview({ userName }: DashboardOverviewProps) {
   return (
     <>
@@ -10,11 +18,30 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
       <p className="text-sm text-muted-foreground">
         Welcome back, <span className="text-foreground">{userName}</span>.
       </p>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-        <div className="aspect-video rounded-xl bg-muted/50" />
-      </div>
+      <section aria-label="Card variants" className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Default card</CardTitle>
+            <CardDescription>Border enabled by default.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <code className="text-xs text-muted-foreground">
+              {"<Card>…</Card>"}
+            </code>
+          </CardContent>
+        </Card>
+        <Card border={false}>
+          <CardHeader>
+            <CardTitle>Borderless card</CardTitle>
+            <CardDescription>A card without the outer border.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <code className="text-xs text-muted-foreground">
+              {"<Card border={false}>…</Card>"}
+            </code>
+          </CardContent>
+        </Card>
+      </section>
       <div className="min-h-[60vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
     </>
   )
