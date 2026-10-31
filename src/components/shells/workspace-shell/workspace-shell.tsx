@@ -93,7 +93,7 @@ export function WorkspaceShell({ children, assistant }: WorkspaceShellProps) {
           assistantOpen={assistantOpen}
           onAssistantToggle={() => setAssistantOpen(!assistantOpen)}
         />
-        <div className="mx-2 mb-2 flex min-h-[calc(100svh-4rem)] flex-1 rounded-2xl border bg-background shadow-xs md:mr-3 md:mb-3 md:ml-0 md:min-h-[calc(100svh-4.25rem)]">
+        <div className="mx-2 mb-2 flex min-h-[calc(100svh-4rem)] flex-1 rounded-2xl bg-background shadow-xs md:mr-3 md:mb-3 md:ml-0 md:min-h-[calc(100svh-4.25rem)]">
           <main
             id={MAIN_CONTENT_ID}
             tabIndex={-1}
