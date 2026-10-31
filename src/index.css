@@ -62,7 +62,7 @@
   --foreground: #0d0d0d;
   --card: #ffffff;
   --stacked-card: var(--secondary);
-  --dialog-overlay: rgb(0 0 0 / 15%);
+  --dialog-overlay: rgb(0 0 0 / 20%);
   --dialog-stack-shadow:
     0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 20%);
@@ -111,7 +111,7 @@
   --foreground: #ededed;
   --card: #212121;
   --stacked-card: #181818;
-  --dialog-overlay: rgb(0 0 0 / 30%);
+  --dialog-overlay: rgb(0 0 0 / 35%);
   --dialog-stack-shadow:
     0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 40%);
