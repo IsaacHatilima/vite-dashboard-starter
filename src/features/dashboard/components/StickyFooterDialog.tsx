@@ -55,7 +55,7 @@ const guideSections = [
   },
 ]
 
-export function StickyFooterDialog() {
+export function StickyFooterDialog({ stack = false }: { stack?: boolean }) {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
 
@@ -65,7 +65,7 @@ export function StickyFooterDialog() {
         Open sticky footer dialog
       </DialogTrigger>
       <DialogContent
-        stack
+        stack={stack}
         className="flex max-h-[calc(100svh-2rem)] flex-col overflow-hidden sm:max-w-lg"
         initialFocus={titleRef}
         finalFocus={triggerRef}

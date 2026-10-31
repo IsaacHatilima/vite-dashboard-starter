@@ -35,6 +35,35 @@ put the request in each container's submit handler (scaffold it with
 `npx domain-driver --root src/features/auth make:action <screen>/User <action>`)
 and add route guards in `src/router.tsx`.
 
+## Swapping the auth shell
+
+All seven auth screens share the same forms and can use any of these frames:
+
+| Shell              | Source                         | Layout                                                                 |
+| ------------------ | ------------------------------ | ---------------------------------------------------------------------- |
+| `SplitAuthShell`   | shadcn `login-02`              | Form column beside a full-height photo; photo hides on smaller screens |
+| `CardAuthShell`    | shadcn `login-03`              | Centered card with the brand above                                     |
+| `MinimalAuthShell` | shadcn `login-05`              | Centered unboxed form with an icon brand                               |
+| `PhotoAuthShell`   | Supplied Shadcnspace reference | Floating form surface over a full-page photo                           |
+
+Choose the frame with one import in `src/layouts/auth-layout.tsx`:
+
+```tsx
+import { SplitAuthShell as AuthShell } from "@/components/auth-shells"
+```
+
+`SplitAuthShell` is active. Each shell accepts `children`; the shared `AuthCard`
+adapts its surface to the frame so forms do not end up inside nested cards.
+Typography, fields, buttons, focus states, and light/dark colors use the same
+components throughout. Replace `public/images/auth/workspace.jpg` to change
+the photo used by the split and photo frames.
+
+The two-factor screen uses the supplied `AnimatedOTP` from
+`src/components/shadcn-space/input-otp/input-otp-09.tsx`. It supports controlled
+or uncontrolled input, native input props and refs, paste, and reduced motion.
+The auth form configures six numeric digits and keeps its recovery-code mode.
+The file also exports the original standalone demo as its default export.
+
 ## Swapping the dashboard shell
 
 Every page after login renders inside a shell. There are four, all with the
@@ -94,7 +123,7 @@ import {
   StackFooter,
 } from "@/components/ui/stacked-card"
 
-<StackedCard top bottom>
+;<StackedCard top bottom>
   <StackHeader>Sales trend</StackHeader>
   <StackContent>
     <CardHeader>
@@ -131,6 +160,10 @@ Use `<DialogContent stack>` (or `stack={true}`) for a layered edge: a backing
 frame with an inner and outer hairline. It defaults to `false` for the standard
 dialog surface. The dashboard's sticky-footer example enables it. Dialog
 overlays dim the page without blurring it, with a stronger dim in dark mode.
+
+`StickyFooterDialog` forwards the same flag:
+`<StickyFooterDialog stack />` enables the layered edge;
+`<StickyFooterDialog stack={false} />` disables it. It defaults to `false`.
 
 ## Adding features
 
