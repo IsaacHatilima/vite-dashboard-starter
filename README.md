@@ -278,8 +278,9 @@ iOS Safari overlay behavior.
 
 ## Sheets
 
-Open `/dashboard` and scroll to **Sheets** to review **Open right sheet**.
-The example keeps the overlay visible while allowing the page counter to work.
+Open `/dashboard` and scroll to **Sheets**. **Normal sheet** traps focus and
+blocks the page; **Non-modal sheet** keeps the overlay visible while allowing
+the page counter to work. Both open from the right.
 
 ```tsx
 <Sheet modal={false} disablePointerDismissal>
