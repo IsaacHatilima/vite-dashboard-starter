@@ -65,8 +65,10 @@
   --color-card: var(--card);
   --color-stacked-card: var(--stacked-card);
   --color-dialog-overlay: var(--dialog-overlay);
+  --color-auth-photo-overlay: var(--auth-photo-overlay);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-dashboard: var(--dashboard-background);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -90,18 +92,21 @@
   --app-page-top: 28px;
   --field-gap: 14px;
   --icon-stroke-width: 1.8;
-  /* Sidebars and RailShell's icons share a surface. The page and RailShell's
-     navigation panel use the body canvas; hover and selected fills are translucent. */
+  /* Dashboard pages and RailShell's icon rail share the gray canvas.
+     Sidebar navigation keeps its own surface. */
   color-scheme: light;
   --background: #fcfcfc;
+  --dashboard-background: #f2f2f2;
   --foreground: #0d0d0d;
   --card: #ffffff;
-  --stacked-card: var(--secondary);
+  --stacked-card: #e8e8e8;
+  --overlay-stack-background: var(--secondary);
   --stacked-card-shadow:
     0 2px 4px -1px rgb(0 0 0 / 5%), 0 6px 12px -6px rgb(0 0 0 / 12%);
-  --dialog-overlay: rgb(0 0 0 / 20%);
+  --dialog-overlay: rgb(0 0 0 / 30%);
+  --auth-photo-overlay: rgb(0 0 0 / 20%);
   --dialog-stack-shadow:
-    0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
+    0 0 0 1px var(--border), 0 0 0 6px var(--overlay-stack-background),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 20%);
   --card-foreground: #0d0d0d;
   --popover: #ffffff;
@@ -128,7 +133,7 @@
   --sidebar: #f9f9f9;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--background);
-  --sidebar-rail: var(--sidebar);
+  --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
   --sidebar-muted-foreground: #8f8f8f;
@@ -146,15 +151,18 @@
 .dark {
   color-scheme: dark;
   --background: #0e0e0e;
+  --dashboard-background: #0e0e0e;
   --foreground: #ededed;
   --card: #212121;
   --stacked-card: #181818;
+  --overlay-stack-background: #181818;
   --stacked-card-shadow:
     0 0 0 1px rgb(255 255 255 / 4%), 0 2px 4px rgb(0 0 0 / 20%),
     0 6px 12px -6px rgb(0 0 0 / 40%);
-  --dialog-overlay: rgb(0 0 0 / 35%);
+  --dialog-overlay: rgb(0 0 0 / 50%);
+  --auth-photo-overlay: rgb(0 0 0 / 35%);
   --dialog-stack-shadow:
-    0 0 0 1px var(--border), 0 0 0 6px var(--stacked-card),
+    0 0 0 1px var(--border), 0 0 0 6px var(--overlay-stack-background),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 40%);
   --card-foreground: #ededed;
   --popover: #212121;
@@ -180,7 +188,7 @@
   --sidebar: #000000;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--popover);
-  --sidebar-rail: var(--sidebar);
+  --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(237 237 237 / 85%);
   --sidebar-muted-foreground: #afafaf;
   --sidebar-primary: #ededed;

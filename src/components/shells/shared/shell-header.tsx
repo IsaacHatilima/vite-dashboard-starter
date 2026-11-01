@@ -50,7 +50,7 @@ export function ShellHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-background px-(--app-gutter)",
+        "sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-dashboard px-(--app-gutter)",
         className
       )}
     >

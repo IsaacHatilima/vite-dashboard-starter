@@ -33,21 +33,19 @@ function CommandDialog({
   description = "Search for a command to run...",
   children,
   className,
-  showCloseButton = true,
   stack = false,
   ...props
 }: Omit<React.ComponentProps<typeof Dialog>, "children"> & {
   title?: string
   description?: string
   className?: string
-  showCloseButton?: boolean
   children: React.ReactNode
 }) {
   return (
     <Dialog stack={stack} {...props}>
       <DialogContent
         className={cn("overflow-hidden p-0 sm:max-w-lg", className)}
-        showCloseButton={showCloseButton}
+        showCloseButton={false}
       >
         <DialogHeader className="sr-only">
           <DialogTitle>{title}</DialogTitle>
@@ -64,10 +62,7 @@ function CommandInput({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
-    <div
-      data-slot="command-input-wrapper"
-      className="shrink-0 p-1 pb-0 in-data-[slot=dialog-content]:pr-10"
-    >
+    <div data-slot="command-input-wrapper" className="shrink-0 p-1 pb-0">
       <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
         <CommandPrimitive.Input
           data-slot="command-input"

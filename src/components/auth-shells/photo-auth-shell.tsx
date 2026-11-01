@@ -17,7 +17,7 @@ export function PhotoAuthShell({ children }: AuthShellProps) {
           className="absolute inset-0 -z-10 size-full object-cover"
         />
         <div
-          className="absolute inset-0 -z-10 bg-dialog-overlay"
+          className="absolute inset-0 -z-10 bg-auth-photo-overlay"
           aria-hidden="true"
         />
         <main className="mx-auto flex min-h-[calc(100svh-2rem)] w-full max-w-7xl items-center py-8 sm:min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-6rem)]">
