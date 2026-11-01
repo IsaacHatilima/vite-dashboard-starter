@@ -36,7 +36,7 @@ function StackedCard({
       <div
         data-slot="stacked-card"
         className={cn(
-          "isolate flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card text-card-foreground",
+          "isolate flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card text-card-foreground ring-1 ring-foreground/5",
           className
         )}
         {...props}
