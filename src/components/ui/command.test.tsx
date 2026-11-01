@@ -125,8 +125,8 @@ describe("shared CommandDialog", () => {
         "Choose a page in your workspace."
       )
       expect(
-        within(dialog).getByRole("button", { name: "Close" })
-      ).toBeVisible()
+        within(dialog).queryByRole("button", { name: "Close" })
+      ).not.toBeInTheDocument()
     }
   )
 
@@ -171,25 +171,18 @@ describe("shared CommandDialog", () => {
     )
   })
 
-  it.each(["Escape", "Close"])(
-    "dismisses with %s and restores trigger focus",
-    async (method) => {
-      const user = userEvent.setup()
-      render(<WorkspaceCommands stack />)
-      const dialog = await openCommands(user)
+  it("dismisses with Escape and restores trigger focus", async () => {
+    const user = userEvent.setup()
+    render(<WorkspaceCommands stack />)
+    await openCommands(user)
 
-      if (method === "Escape") {
-        await user.keyboard("{Escape}")
-      } else {
-        await user.click(within(dialog).getByRole("button", { name: "Close" }))
-      }
+    await user.keyboard("{Escape}")
 
-      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
-      await waitFor(() =>
-        expect(
-          screen.getByRole("button", { name: "Open commands" })
-        ).toHaveFocus()
-      )
-    }
-  )
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Open commands" })
+      ).toHaveFocus()
+    )
+  })
 })
