@@ -26,7 +26,7 @@ export function WorkspaceHeader({
   const { section, item } = useActiveNavigation()
 
   return (
-    <header className="sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-dashboard px-(--app-gutter)">
+    <header className="sticky top-0 z-10 flex h-(--app-header-height) min-w-0 shrink-0 items-center gap-2 bg-sidebar px-(--app-gutter)">
       <SidebarTrigger aria-label="Toggle sidebar" className="shrink-0" />
       <Breadcrumb className="min-w-0 flex-1">
         <BreadcrumbList className="flex-nowrap">

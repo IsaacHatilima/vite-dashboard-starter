@@ -91,8 +91,8 @@
   --app-page-top: 28px;
   --field-gap: 14px;
   --icon-stroke-width: 1.8;
-  /* Sidebars and RailShell's icons share a surface. Its navigation panel uses
-     the body canvas; dashboard pages have a separate gray canvas. */
+  /* Dashboard pages and RailShell's icon rail share the gray canvas.
+     Sidebar navigation keeps its own surface. */
   color-scheme: light;
   --background: #fcfcfc;
   --dashboard-background: #f2f2f2;
@@ -130,7 +130,7 @@
   --sidebar: #f9f9f9;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--background);
-  --sidebar-rail: var(--sidebar);
+  --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
   --sidebar-muted-foreground: #8f8f8f;
@@ -183,7 +183,7 @@
   --sidebar: #000000;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--popover);
-  --sidebar-rail: var(--sidebar);
+  --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(237 237 237 / 85%);
   --sidebar-muted-foreground: #afafaf;
   --sidebar-primary: #ededed;
