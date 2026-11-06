@@ -75,7 +75,7 @@ function StackContent({
       data-slot="stack-content"
       border={border}
       className={cn(
-        "relative z-10 min-w-0 flex-1 rounded-2xl shadow-(--stacked-card-shadow)",
+        "relative z-10 min-w-0 flex-1 rounded-2xl bg-card shadow-(--stacked-card-shadow)",
         className
       )}
       {...props}
