@@ -150,12 +150,12 @@
 
 .dark {
   color-scheme: dark;
-  --background: #0e0e0e;
-  --dashboard-background: #0e0e0e;
+  --background: #151515;
+  --dashboard-background: var(--background);
   --foreground: #ededed;
-  --card: #212121;
-  --stacked-card: #181818;
-  --overlay-stack-background: #181818;
+  --card: #1c1c1c;
+  --stacked-card: var(--secondary);
+  --overlay-stack-background: var(--secondary);
   --stacked-card-shadow:
     0 0 0 1px rgb(255 255 255 / 4%), 0 2px 4px rgb(0 0 0 / 20%),
     0 6px 12px -6px rgb(0 0 0 / 40%);
@@ -165,39 +165,39 @@
     0 0 0 1px var(--border), 0 0 0 6px var(--overlay-stack-background),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 40%);
   --card-foreground: #ededed;
-  --popover: #212121;
+  --popover: var(--card);
   --popover-foreground: #ededed;
   --primary: #ededed;
   --primary-foreground: #0d0d0d;
-  --secondary: #303030;
+  --secondary: #191919;
   --secondary-foreground: #ededed;
-  --muted: rgb(255 255 255 / 10%);
-  --muted-foreground: #cdcdcd;
+  --muted: var(--secondary);
+  --muted-foreground: #909090;
   --scrollbar-thumb: rgb(255 255 255 / 20%);
-  --accent: rgb(255 255 255 / 10%);
+  --accent: rgb(255 255 255 / 5%);
   --accent-foreground: #ededed;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: rgb(255 255 255 / 15%);
-  --input: rgb(255 255 255 / 15%);
+  --border: rgb(255 255 255 / 5%);
+  --input: var(--border);
   --ring: #3a83f7;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: #000000;
+  --sidebar: var(--background);
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--popover);
   --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(237 237 237 / 85%);
-  --sidebar-muted-foreground: #afafaf;
+  --sidebar-muted-foreground: var(--muted-foreground);
   --sidebar-primary: #ededed;
   --sidebar-primary-foreground: #0d0d0d;
-  --sidebar-accent: rgb(255 255 255 / 10%);
+  --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: #ededed;
-  --sidebar-border: rgb(255 255 255 / 15%);
+  --sidebar-border: var(--border);
   --sidebar-ring: #3a83f7;
-  --sidebar-panel-shadow: 0 0 0 0.5px rgb(255 255 255 / 15%);
+  --sidebar-panel-shadow: 0 0 0 0.5px var(--border);
 }
 
 @layer base {
