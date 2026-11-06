@@ -141,7 +141,7 @@ export function RailSidebar() {
         >
           <SectionPanel
             section={peekSection}
-            className="h-full rounded-xl bg-sidebar-panel-floating text-popover-foreground shadow-lg ring-1 ring-foreground/10 dark:ring-foreground/5"
+            className="h-full rounded-xl bg-sidebar-panel-floating text-popover-foreground shadow-lg ring-1 ring-border dark:ring-foreground/5"
             onToggle={() => {
               setSelected(peekSection)
               peek.close()

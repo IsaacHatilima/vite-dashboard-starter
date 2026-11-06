@@ -21,7 +21,7 @@ export function PhotoAuthShell({ children }: AuthShellProps) {
           aria-hidden="true"
         />
         <main className="mx-auto flex min-h-[calc(100svh-2rem)] w-full max-w-7xl items-center py-8 sm:min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-6rem)]">
-          <div className="flex w-full max-w-md flex-col gap-8 rounded-3xl bg-card p-6 text-card-foreground shadow-2xl ring-1 ring-foreground/10 sm:p-8">
+          <div className="flex w-full max-w-md flex-col gap-8 rounded-3xl bg-card p-6 text-card-foreground shadow-2xl ring-1 ring-border sm:p-8">
             <AuthBrand />
             {children}
           </div>

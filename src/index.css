@@ -92,14 +92,14 @@
   --app-page-top: 28px;
   --field-gap: 14px;
   --icon-stroke-width: 1.8;
-  /* Dashboard pages and RailShell's icon rail share the gray canvas.
+  /* Dashboard pages and RailShell's icon rail share the canvas.
      Sidebar navigation keeps its own surface. */
   color-scheme: light;
   --background: #fcfcfc;
-  --dashboard-background: #f2f2f2;
+  --dashboard-background: var(--background);
   --foreground: #0d0d0d;
-  --card: #ffffff;
-  --stacked-card: #e8e8e8;
+  --card: var(--background);
+  --stacked-card: var(--secondary);
   --overlay-stack-background: var(--secondary);
   --stacked-card-shadow:
     0 2px 4px -1px rgb(0 0 0 / 5%), 0 6px 12px -6px rgb(0 0 0 / 12%);
@@ -109,21 +109,21 @@
     0 0 0 1px var(--border), 0 0 0 6px var(--overlay-stack-background),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 20%);
   --card-foreground: #0d0d0d;
-  --popover: #ffffff;
+  --popover: var(--card);
   --popover-foreground: #0d0d0d;
-  --primary: #0d0d0d;
+  --primary: #0285f7;
   --primary-foreground: #ffffff;
-  --secondary: #f3f3f3;
+  --secondary: #f5f5f5;
   --secondary-foreground: #0d0d0d;
-  --muted: rgb(0 0 0 / 5%);
-  --muted-foreground: #5d5d5d;
+  --muted: var(--secondary);
+  --muted-foreground: #636363;
   --scrollbar-thumb: rgb(0 0 0 / 20%);
-  --accent: rgb(0 0 0 / 5%);
+  --accent: rgb(0 0 0 / 4%);
   --accent-foreground: #0d0d0d;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgb(0 0 0 / 10%);
-  --input: rgb(0 0 0 / 15%);
-  --ring: #3a83f7;
+  --border: rgb(0 0 0 / 6%);
+  --input: rgb(0 0 0 / 10%);
+  --ring: var(--primary);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -139,10 +139,10 @@
   --sidebar-muted-foreground: #8f8f8f;
   --sidebar-primary: #0d0d0d;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgb(0 0 0 / 5%);
+  --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: #0d0d0d;
-  --sidebar-border: rgb(0 0 0 / 10%);
-  --sidebar-ring: #3a83f7;
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
   /* RailShell's panel is a sheet raised off the rail: hairline plus soft shadow. */
   --sidebar-panel-shadow:
     0 0 0 0.5px rgb(0 0 0 / 4%), 0 4px 16px rgb(0 0 0 / 5%);
@@ -150,12 +150,12 @@
 
 .dark {
   color-scheme: dark;
-  --background: #0e0e0e;
-  --dashboard-background: #0e0e0e;
+  --background: #151515;
+  --dashboard-background: var(--background);
   --foreground: #ededed;
-  --card: #212121;
-  --stacked-card: #181818;
-  --overlay-stack-background: #181818;
+  --card: #1c1c1c;
+  --stacked-card: var(--secondary);
+  --overlay-stack-background: var(--secondary);
   --stacked-card-shadow:
     0 0 0 1px rgb(255 255 255 / 4%), 0 2px 4px rgb(0 0 0 / 20%),
     0 6px 12px -6px rgb(0 0 0 / 40%);
@@ -165,39 +165,39 @@
     0 0 0 1px var(--border), 0 0 0 6px var(--overlay-stack-background),
     0 0 0 7px var(--border), 0 16px 48px rgb(0 0 0 / 40%);
   --card-foreground: #ededed;
-  --popover: #212121;
+  --popover: var(--card);
   --popover-foreground: #ededed;
   --primary: #ededed;
   --primary-foreground: #0d0d0d;
-  --secondary: #303030;
+  --secondary: #191919;
   --secondary-foreground: #ededed;
-  --muted: rgb(255 255 255 / 10%);
-  --muted-foreground: #cdcdcd;
+  --muted: var(--secondary);
+  --muted-foreground: #909090;
   --scrollbar-thumb: rgb(255 255 255 / 20%);
-  --accent: rgb(255 255 255 / 10%);
+  --accent: rgb(255 255 255 / 5%);
   --accent-foreground: #ededed;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: rgb(255 255 255 / 15%);
-  --input: rgb(255 255 255 / 15%);
+  --border: rgb(255 255 255 / 5%);
+  --input: var(--border);
   --ring: #3a83f7;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: #000000;
+  --sidebar: var(--background);
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--popover);
   --sidebar-rail: var(--dashboard-background);
   --sidebar-foreground: rgb(237 237 237 / 85%);
-  --sidebar-muted-foreground: #afafaf;
+  --sidebar-muted-foreground: var(--muted-foreground);
   --sidebar-primary: #ededed;
   --sidebar-primary-foreground: #0d0d0d;
-  --sidebar-accent: rgb(255 255 255 / 10%);
+  --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: #ededed;
-  --sidebar-border: rgb(255 255 255 / 15%);
+  --sidebar-border: var(--border);
   --sidebar-ring: #3a83f7;
-  --sidebar-panel-shadow: 0 0 0 0.5px rgb(255 255 255 / 15%);
+  --sidebar-panel-shadow: 0 0 0 0.5px var(--border);
 }
 
 @layer base {
