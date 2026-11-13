@@ -43,7 +43,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",
     "@vitest/coverage-v8": "^5.0.5",
-    "domain-driver": "^0.9.1",
+    "domain-driver": "^0.10.0",
     "eslint": "^10",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
