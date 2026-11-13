@@ -6,4 +6,4 @@ allowBuilds:
   msw: false
 
 minimumReleaseAgeExclude:
-  - domain-driver@0.9.1 || 0.10.0
+  - domain-driver@0.9.1 || 0.10.0 || 0.12.0
