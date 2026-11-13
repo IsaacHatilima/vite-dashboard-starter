@@ -314,10 +314,16 @@ describe("RailShell", () => {
 
     await user.keyboard("{Escape}")
 
-    expect(
-      screen.queryByRole("navigation", { name: "Team pages" })
-    ).not.toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Team" })).toHaveFocus()
+    // Base UI closes the card and returns focus asynchronously; under load
+    // that lands after the keypress resolves.
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "Team pages" })
+      ).not.toBeInTheDocument()
+    )
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Team" })).toHaveFocus()
+    )
   })
 
   it("navigates from the card and closes it", async () => {
