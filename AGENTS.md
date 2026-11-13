@@ -8,7 +8,7 @@ React 19, TypeScript, Vite, react-router, and shadcn/ui on Base UI. `README.md` 
 
 ## Features
 
-- Each feature lives in `src/features/<feature>/`. Scaffold it with domain-driver before writing a file by hand: `pnpm exec domain-driver make:feature <feature>/<Entity> -a`. An operation other than List, Show, Create, Update, or Delete is `make:action <feature>/<Entity> <action>`. A nested feature takes `--root`, such as `--root src/features/auth`.
+- Each feature lives in `src/features/<feature>/`. Scaffold it with domain-driver before writing a file by hand: `pnpm exec domain-driver make:feature <feature>/<Entity> -a`. An operation other than List, Show, Create, Update, or Delete is `make:action <feature>/<Entity> <action>`; one that changes state names its method (`--method post|put|patch|delete`, otherwise it is a `GET` query that runs on mount), and one that acts on a record by id adds `--on-record`. The entity's fields go in `schemas/<Entity>.schema.ts`; its type is inferred from that schema. A nested feature takes `--root`, such as `--root src/features/auth`.
 - The generated schemas use `zod`. Parse request bodies and API responses with them, and derive the feature's types with `z.infer`.
 - Code that every feature shares, such as an API client, lives once in `src/lib/`.
 - Routes are registered in `src/router.tsx`.
