@@ -146,7 +146,12 @@ describe.each(shells)("%s", (_, Shell) => {
     })
     trigger.focus()
     await user.keyboard("{Enter}")
-    await screen.findByRole("menuitemradio", { name: "Light" })
+    const menu = await screen.findByRole("menu")
+    // The menu moves focus to its first item after it opens. Keys pressed
+    // before that land on the trigger and shift every step by one.
+    await waitFor(() =>
+      expect(menu).toContainElement(document.activeElement as HTMLElement)
+    )
 
     await user.keyboard("{Home}{ArrowDown}{ArrowDown}{ArrowDown}")
     const dark = screen.getByRole("menuitemradio", { name: "Dark" })

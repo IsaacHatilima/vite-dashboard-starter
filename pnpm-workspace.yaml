@@ -4,3 +4,6 @@ allowBuilds:
   domain-driver: true
   esbuild: true
   msw: false
+
+minimumReleaseAgeExclude:
+  - domain-driver@0.9.1
