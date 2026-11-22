@@ -34,6 +34,16 @@ function CommandPreview({ label, stack }: { label: string; stack: boolean }) {
             aria-label="Search workspace commands"
             placeholder="Type a command or search…"
           />
+          <div className="shrink-0 px-3 py-2">
+            <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+              {`<CommandDialog${stack ? " stack" : ""}>
+  <Command label="Workspace commands">
+    <CommandInput placeholder="Type a command or search…" />
+    <CommandList>…</CommandList>
+  </Command>
+</CommandDialog>`}
+            </code>
+          </div>
           <CommandList>
             <CommandEmpty>No pages found.</CommandEmpty>
             {mainNavigation.map((section) => (

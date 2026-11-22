@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
@@ -57,6 +58,32 @@ async function openProjectDialog(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe("shared Dialog", () => {
+  it.each([false, true])(
+    "avoids ui-sdk's automatic dialog margins with stack=%s",
+    async (stack) => {
+      const stylesheet = new CSSStyleSheet()
+      stylesheet.replaceSync(
+        readFileSync(
+          new URL(import.meta.resolve("@ui-sdk/core/web.css")),
+          "utf8"
+        )
+      )
+      const layer = stylesheet.cssRules[0] as CSSGroupingRule
+      const panelRule = Array.from(layer.cssRules).find(
+        (rule): rule is CSSStyleRule =>
+          rule instanceof CSSStyleRule &&
+          rule.selectorText.includes('[data-slot="dialog-content"]') &&
+          rule.style.margin === "auto"
+      )
+      expect(panelRule).toBeDefined()
+
+      render(<ProjectDialog stack={stack} />)
+      const dialog = await openProjectDialog(userEvent.setup())
+
+      expect(dialog.matches(panelRule!.selectorText)).toBe(false)
+    }
+  )
+
   it("defaults to a plain surface", async () => {
     render(<ProjectDialog />)
     const dialog = await openProjectDialog(userEvent.setup())

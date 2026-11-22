@@ -17,7 +17,7 @@ export function InsetSidebar() {
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
-        <ShellBrand />
+        <ShellBrand showTagline={false} className="no-underline" />
       </SidebarHeader>
       <SidebarContent>
         <InsetNavMain sections={mainNavigation} />

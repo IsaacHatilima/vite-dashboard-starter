@@ -88,17 +88,20 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
                 <CardDescription>A toolbar above the card.</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  The inner card expands to fill the height when there is no
-                  bottom band.
-                </p>
+                <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                  {`<StackedCard top>
+  <StackHeader>…</StackHeader>
+  <StackContent>…</StackContent>
+</StackedCard>`}
+                </code>
                 <p
                   id="stacked-card-details"
                   hidden={!showDetails}
                   className="text-sm leading-relaxed text-muted-foreground"
                 >
-                  Header and footer sections can contain buttons, inputs, or
-                  other components.
+                  <code className="block whitespace-pre-wrap text-xs leading-relaxed wrap-anywhere">
+                    {"<Button onClick={() => setShowDetails((visible) => !visible)}>…</Button>"}
+                  </code>
                 </p>
               </CardContent>
             </StackContent>
@@ -110,10 +113,12 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
                 <CardDescription>Actions below the card.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  The card fills the remaining space above a footer with
-                  supporting context and actions.
-                </p>
+                <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                  {`<StackedCard bottom>
+  <StackContent>…</StackContent>
+  <StackFooter>…</StackFooter>
+</StackedCard>`}
+                </code>
               </CardContent>
             </StackContent>
             <StackFooter>
@@ -148,15 +153,16 @@ export function DashboardOverview({ userName }: DashboardOverviewProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p
+                <code
                   id="stacked-card-project-preview"
-                  className="text-sm leading-relaxed text-muted-foreground"
+                  className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere"
                 >
-                  Project:{" "}
-                  <span className="font-medium text-foreground">
-                    {projectName || "Untitled project"}
-                  </span>
-                </p>
+                  {`<StackedCard top bottom>
+  <StackHeader>…</StackHeader>
+  <StackContent>…</StackContent>
+  <StackFooter>…</StackFooter>
+</StackedCard>`}
+                </code>
               </CardContent>
             </StackContent>
             <StackFooter>

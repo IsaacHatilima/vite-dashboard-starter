@@ -1,6 +1,5 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type * as React from "react"
-
 import { Sidebar, useSidebar } from "@/components/ui/sidebar"
 import {
   mainNavigation,
@@ -8,6 +7,7 @@ import {
   type NavSection,
 } from "@/config/navigation"
 import { useActiveNavigation } from "../shared/active-navigation"
+import { ShellCommand } from "../shared/shell-command"
 import { useCloseMobileSidebarOnNavigate } from "../shared/sidebar-state"
 import { SectionPanel } from "./section-panel"
 import { SectionRail } from "./section-rail"
@@ -20,6 +20,7 @@ import { useRailPeek } from "./use-rail-peek"
 export function RailSidebar() {
   useCloseMobileSidebarOnNavigate()
   const { open, setOpen, isMobile, setOpenMobile } = useSidebar()
+  const [searchOpen, setSearchOpen] = useState(false)
   // Phones use a drawer, which has no collapsed state.
   const collapsed = !open && !isMobile
   const rowRef = useRef<HTMLDivElement>(null)
@@ -42,6 +43,21 @@ export function RailSidebar() {
 
   const peek = useRailPeek()
   const peekSection = collapsed ? peek.section : null
+  const closePeek = peek.close
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        closePeek()
+        // The command dialog mounts inside the sidebar's mobile sheet.
+        if (isMobile) setOpenMobile(true)
+        setSearchOpen((current) => !current)
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [closePeek, isMobile, setOpenMobile])
 
   function focusRailButton(section: NavSection) {
     const button =
@@ -94,6 +110,11 @@ export function RailSidebar() {
             selected={selected}
             peeked={peekSection}
             collapsed={collapsed}
+            searchOpen={searchOpen}
+            onSearch={() => {
+              peek.close()
+              setSearchOpen(true)
+            }}
             onSettingsNavigate={() => {
               setSelected(settingsNavigation)
               peek.close()
@@ -129,6 +150,13 @@ export function RailSidebar() {
             />
           )}
         </div>
+        <ShellCommand
+          open={searchOpen}
+          onOpenChange={setSearchOpen}
+          onNavigate={() => {
+            if (isMobile) setOpenMobile(false)
+          }}
+        />
       </Sidebar>
       {/* Rendered beside the Sidebar, not in it: inside a collapsed sidebar,
           shadcn shrinks every menu button to an icon square, which would cut

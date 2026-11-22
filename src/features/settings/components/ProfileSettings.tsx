@@ -52,7 +52,11 @@ export default function ProfileSettings() {
             <p className="min-w-0 flex-1 text-xs text-muted-foreground">
               Profile changes are unavailable in this preview.
             </p>
-            <Button type="submit" disabled>
+            <Button
+              type="submit"
+              className="[--primary:var(--foreground)]"
+              disabled
+            >
               Save changes
             </Button>
           </CardFooter>

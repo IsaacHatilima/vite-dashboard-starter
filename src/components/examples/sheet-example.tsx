@@ -51,7 +51,13 @@ export function SheetExample() {
                   <SheetTitle>{label}</SheetTitle>
                   <SheetDescription>{description}</SheetDescription>
                 </SheetHeader>
-                <div className="min-h-0 flex-1 overflow-y-auto px-4">
+                <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4">
+                  <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                    {`<Sheet modal={${modal}} disablePointerDismissal={${!modal}}>
+  <SheetTrigger>…</SheetTrigger>
+  <SheetContent side="right">…</SheetContent>
+</Sheet>`}
+                  </code>
                   <Field>
                     <FieldLabel htmlFor={inputId}>Sheet note</FieldLabel>
                     <Input id={inputId} placeholder="Write a note…" />

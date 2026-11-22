@@ -45,10 +45,12 @@ export function DrawerExamples() {
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                  <p className="text-sm text-muted-foreground">
-                    Focus stays inside this drawer. Close it with the button or
-                    Escape.
-                  </p>
+                  <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                    {`<Drawer${stack ? " stack" : " stack={false}"}>
+  <DrawerTrigger render={<Button variant="outline" />}>…</DrawerTrigger>
+  <DrawerContent>…</DrawerContent>
+</Drawer>`}
+                  </code>
                 </div>
                 <DrawerFooter>
                   <DrawerClose render={<Button variant="outline" />}>
@@ -74,6 +76,17 @@ export function DrawerExamples() {
                 </DrawerDescription>
               </DrawerHeader>
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
+                <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                  {`<Drawer>
+  <DrawerTrigger>…</DrawerTrigger>
+  <DrawerContent>
+    <Drawer>
+      <DrawerTrigger>…</DrawerTrigger>
+      <DrawerContent>…</DrawerContent>
+    </Drawer>
+  </DrawerContent>
+</Drawer>`}
+                </code>
                 <Field>
                   <FieldLabel htmlFor="drawer-workspace-name">
                     Workspace name
@@ -96,8 +109,17 @@ export function DrawerExamples() {
                           The parent drawer is stacked behind this one.
                         </DrawerDescription>
                       </DrawerHeader>
-                      <div className="min-h-0 flex-1 overflow-y-auto p-4 text-sm text-muted-foreground">
-                        Close this drawer to return to your workspace draft.
+                      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                        <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                          {`<Drawer>
+  <DrawerContent>
+    <Drawer>
+      <DrawerTrigger>Open nested drawer</DrawerTrigger>
+      <DrawerContent>…</DrawerContent>
+    </Drawer>
+  </DrawerContent>
+</Drawer>`}
+                        </code>
                       </div>
                       <DrawerFooter>
                         <DrawerClose render={<Button variant="outline" />}>
@@ -129,9 +151,13 @@ export function DrawerExamples() {
                   The page remains interactive while this drawer is open.
                 </DrawerDescription>
               </DrawerHeader>
-              <div className="min-h-0 flex-1 overflow-y-auto p-4 text-sm text-muted-foreground">
-                Scroll the page and use the background counter below the drawer
-                buttons. Outside interactions keep this drawer open.
+              <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                <code className="block whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground wrap-anywhere">
+                  {`<Drawer modal={false} disablePointerDismissal>
+  <DrawerTrigger>…</DrawerTrigger>
+  <DrawerContent>…</DrawerContent>
+</Drawer>`}
+                </code>
               </div>
               <DrawerFooter>
                 <DrawerClose render={<Button variant="outline" />}>

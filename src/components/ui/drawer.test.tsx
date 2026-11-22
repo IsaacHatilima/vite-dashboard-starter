@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
@@ -96,6 +97,38 @@ function NestedDrawers() {
 }
 
 describe("shared Drawer", () => {
+  it.each([false, true])(
+    "keeps the inner body separate from ui-sdk's styled panel with stack=%s",
+    async (stack) => {
+      const stylesheet = new CSSStyleSheet()
+      stylesheet.replaceSync(
+        readFileSync(
+          new URL(import.meta.resolve("@ui-sdk/core/web.css")),
+          "utf8"
+        )
+      )
+      const layer = stylesheet.cssRules[0] as CSSGroupingRule
+      const panelRule = Array.from(layer.cssRules).find(
+        (rule): rule is CSSStyleRule =>
+          rule instanceof CSSStyleRule &&
+          rule.selectorText === '[data-slot="drawer-content"]'
+      )
+      expect(panelRule).toBeDefined()
+      expect(panelRule!.style.maxHeight).toBe("85dvh")
+
+      const user = userEvent.setup()
+      render(<ProjectDrawer stack={stack} />)
+      await user.click(screen.getByRole("button", { name: "Open project" }))
+      const drawer = await screen.findByRole("dialog", {
+        name: "Project details",
+      })
+      const body = within(drawer).getByText("Review the project.")
+        .parentElement!.parentElement!
+
+      expect(body.matches(panelRule!.selectorText)).toBe(false)
+    }
+  )
+
   it.each([
     {
       label: "default",
