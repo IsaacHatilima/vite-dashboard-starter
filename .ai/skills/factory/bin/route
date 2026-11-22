@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""Map intake's risk and surfaces to the reviewers a job runs.
+
+Usage: route <job-id>
+
+Reads `risk` and `surfaces` from intake.md (through job.json), looks them up in
+config.json's `routing` and `surface_reviewers` tables, and records the
+reviewer list in job.json with `job agents`. Prints the reviewers. Each
+reviewer's model is set in its agent definition, not here.
+
+Adapted from the ZazenCodes software factory v2 (GPLv3); see ../LICENSE.
+"""
+
+import sys
+
+sys.dont_write_bytecode = True
+
+import json  # noqa: E402
+import subprocess  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+from factorylib.jobfiles import job_dir  # noqa: E402
+from factorylib.project import Refused, config  # noqa: E402
+
+BIN = Path(__file__).resolve().parent
+
+
+def die(msg):
+    print(f"route: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def job_cmd(*args):
+    res = subprocess.run([str(BIN / "job"), *args], capture_output=True, text=True)
+    if res.returncode != 0:
+        die(res.stderr.strip())
+
+
+def reviewers_for(intake):
+    routing, surfaces = config()["routing"], config()["surface_reviewers"]
+    if intake["risk"] not in routing:
+        die(f"risk {intake['risk']!r} isn't in config.json routing ({', '.join(routing)})")
+    reviewers = list(routing[intake["risk"]])
+    for surface in intake["surfaces"]:
+        if surface not in surfaces:
+            die(f"surface {surface!r} isn't in config.json surface_reviewers ({', '.join(surfaces)})")
+        reviewers += surfaces[surface]
+    return list(dict.fromkeys(reviewers))
+
+
+def main(argv):
+    if len(argv) != 1:
+        die("usage: route <job-id>")
+    job_id = argv[0]
+    job_cmd("sync", job_id)
+    try:
+        job = json.loads((job_dir(job_id) / "job.json").read_text())
+        intake = job["intake"] or die(f"{job_id} has no intake.md")
+        reviewers = reviewers_for(intake)
+    except Refused as e:
+        die(str(e))
+    job_cmd("agents", job_id, json.dumps({"reviewers": reviewers}))
+    print(f"{job_id}: reviewers " + ", ".join(reviewers))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
