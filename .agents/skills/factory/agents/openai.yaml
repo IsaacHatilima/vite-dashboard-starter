@@ -1,0 +1,5 @@
+interface:
+  display_name: "factory"
+  short_description: "Build descriptions into reviewed, documented PRs"
+policy:
+  allow_implicit_invocation: false

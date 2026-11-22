@@ -1,0 +1,326 @@
+#!/usr/bin/env python3
+"""The only writer of factory/jobs/<job-id>/job.json.
+
+Every stage change goes through `advance`, which checks the files that justify
+it and refuses anything else. Branch and PR effects that belong to a transition
+(the worktree, PR comments and the merge) happen here too, so the
+orchestrator never improvises them.
+
+Usage:
+  job init                      set up factory/ (never overwrites config.json or checks.sh)
+  job queue                     local jobs to start, resume or hand back to a person
+  job create <title> [--source <provider>] [--key <key>] [--url <url>]
+                                queue a local job with its exact description on stdin
+  job header <job> [<role>]      the line every agent prompt starts with; role builder|ux|ui adds its port
+  job advance <job> <stage>      move a job to <stage>, or refuse
+  job merge <job>                APPROVE → sync with the base branch, gate, merge the PR
+  job answer <job>               needs-info → intake, with the operator's answer on stdin
+  job feedback <job>             needs-human → build (or spec, if blocked there), with your feedback (stdin) as feedback-<k>.md
+  job reject <job>               queued or waiting → rejected, with your reason (stdin) as rejection.md
+  job agents <job> <json>        record the routed reviewers (called by bin/route)
+  job sync <job>                 refresh reviews, gate and cost from the job's files
+  job summary [<job>...]         table of jobs: source, stage, PR, docs, cost, time
+
+<job> is a job id (004-dark-mode) or its local sequence number (4).
+Task services are optional: source metadata records context already read by the
+invoking agent. These scripts never read or write GitHub issues or task services.
+
+Adapted from the ZazenCodes software factory v2 (GPLv3); see ../LICENSE.
+"""
+
+import argparse
+import sys
+
+sys.dont_write_bytecode = True
+
+import json  # noqa: E402
+import re  # noqa: E402
+import subprocess  # noqa: E402
+from datetime import datetime, timezone  # noqa: E402
+from pathlib import Path  # noqa: E402
+
+from factorylib import github, learning, requests  # noqa: E402
+from factorylib.cost import short_tokens  # noqa: E402
+from factorylib.jobfiles import (  # noqa: E402
+    all_jobs, dispatch_lock, job_dir, now, prompt_header, resolve, save)
+from factorylib.project import (  # noqa: E402
+    SELECTION, Refused, base_branch, config, die, expand, jobs_dir, repo, require, run)
+from factorylib.setup import init  # noqa: E402
+from factorylib.transitions import (  # noqa: E402
+    TERMINAL, WAITING, advance, escalate, git, require_slot, running, sync)
+
+BIN = Path(__file__).resolve().parent
+
+
+def slugify(title, task_key=None):
+    words = re.findall(r"[a-z0-9]+", title.lower())
+    if task_key:
+        key_parts = task_key.lower().split("-")
+        if words[:len(key_parts)] == key_parts:
+            words = words[len(key_parts):]
+        return "-".join(key_parts + words[:4])
+    words = words[:4]
+    return "-".join(words) or "request"
+
+
+def resolve_skills():
+    """The skill catalog, the factory's selection rules, and the library roots, as absolute paths."""
+    skills = config().get("skills", {})
+    catalog = expand(skills.get("catalog", ".ai/skills/catalog.md"))
+    require(catalog.is_file(), f"the skill catalog {catalog} doesn't exist: install the shared skills "
+                               "or set skills.catalog in factory/config.json")
+    require(SELECTION.is_file(), f"the factory's skill selection {SELECTION} is missing: reinstall the factory")
+    roots = [catalog.parent] + [expand(r) for r in skills.get("roots", [])]
+    unique = list(dict.fromkeys(str(r) for r in roots if r.is_dir()))
+    return {"catalog": str(catalog), "selection": str(SELECTION), "roots": unique}
+
+
+def cmd_create(args):
+    parser = argparse.ArgumentParser(prog="job create")
+    parser.add_argument("title")
+    parser.add_argument("--source")
+    parser.add_argument("--key")
+    parser.add_argument("--url")
+    parsed = parser.parse_args(args)
+    text = sys.stdin.read()
+    require(parsed.title.strip() and not any(c in parsed.title for c in "\n\r\t"),
+            "the job title must be one nonblank line")
+    require(text.strip(), "no request description on stdin")
+    require(not (parsed.key or parsed.url) or parsed.source, "--key and --url require --source")
+    source = None
+    if parsed.source:
+        require(re.fullmatch(r"[a-z][a-z0-9-]*", parsed.source), "invalid source provider")
+        for value in (parsed.key, parsed.url):
+            require(value is None or (value.strip() and not any(ord(c) < 32 for c in value)),
+                    "source metadata must be nonblank single-line text")
+        require(not parsed.url or parsed.url.startswith(("https://", "http://")),
+                "source URL must use http or https")
+        if parsed.source == "mitarbo":
+            require(parsed.key and re.fullmatch(r"[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*", parsed.key),
+                    "Mitarbo jobs require --key with hyphen-separated letters and digits")
+        source = {"provider": parsed.source, "key": parsed.key, "url": parsed.url}
+    skills = resolve_skills()
+    knowledge = learning.knowledge_relative()
+    jobs_dir().mkdir(parents=True, exist_ok=True)
+    numbers = [int(p.name.split("-", 1)[0]) for p in jobs_dir().iterdir()
+               if p.is_dir() and p.name.split("-", 1)[0].isdigit()]
+    task_key = source["key"] if source and source["provider"] == "mitarbo" else None
+    slug = slugify(parsed.title, task_key)
+    job_id = f"{max(numbers, default=0) + 1:03d}-{slug}"
+    job_dir(job_id).mkdir()
+    job = {
+        "id": job_id, "title": parsed.title.strip(), "source": source,
+        "pr": None, "pr_url": None,
+        "branch": f"factory/{job_id}",
+        "worktree": str(repo() / ".worktrees" / job_id),
+        "stage": "queued", "round": 0, "round_limit": config()["max_rounds"], "round_base": None,
+        "intake": None, "agents": None, "gate": None, "reviews": {},
+        "outcome": None, "escalation": None, "doc": None, "doc_base": None, "doc_head": None,
+        "skills": skills, "cost_usd": 0.0, "tokens": 0, "started": now(), "ended": None,
+        "knowledge_root": knowledge, "taught_findings": [], "teaching": None,
+    }
+    requests.write_request(job, text)
+    save(job)
+    print(job_id)
+
+
+def cmd_queue():
+    """Local queue only. New work is explicitly submitted with `job create`."""
+    jobs = all_jobs()
+    for j in jobs:
+        if j["stage"] not in TERMINAL and j["pr"] and github.pr_state(j) == "MERGED":
+            save(advance(sync(j), "merged"))
+    limit = config()["concurrency"]
+    slots = limit - len(running(jobs))
+    rows, waiting = [], []
+    for j in jobs:
+        stage = j["stage"]
+        if stage in TERMINAL:
+            continue
+        if stage == "queued":
+            action = "resume" if slots > 0 else "hold"
+            note = "start intake" if slots > 0 else f"concurrency {limit} reached"
+            slots -= int(slots > 0)
+            waiting.append((action, j["id"], stage, note))
+        elif stage in WAITING:
+            note = "answer the intake questions with job answer" if stage == "needs-info" else (
+                f"merge PR #{j['pr']}, or give feedback" if j["pr"] else "give feedback")
+            waiting.append(("wait", j["id"], stage, note))
+        else:
+            rows.append(("resume", j["id"], stage, f"round {j['round']}"))
+    for row in rows + waiting:
+        print("\t".join(str(c) for c in row))
+
+
+def cmd_merge(job):
+    sync(job)
+    if job["stage"] == "approve":
+        save(advance(job, "merging"))
+    require(job["stage"] == "merging", f"{job['id']} is in {job['stage']}, not approve or merging")
+    if job["pr"] and github.pr_state(job) == "MERGED":
+        save(advance(sync(job), "merged"))
+        print(f"{job['id']}: merged PR #{job['pr']}")
+        return
+
+    def fail(why):
+        escalate(job, why)
+        save(advance(sync(job), "needs-human"))
+        print(f"{job['id']}: needs-human: {why.splitlines()[0]}")
+
+    base = base_branch()
+    git(job, "fetch", "origin", base)
+    merged = git(job, "merge", "--no-edit", f"origin/{base}", check=False)
+    if merged.returncode != 0:
+        git(job, "merge", "--abort", check=False)
+        return fail(f"The branch conflicts with {base}:\n\n```\n{merged.stdout.strip()}\n```")
+    gate = subprocess.run([str(BIN / "gate"), job["id"], "--merge"], capture_output=True, text=True)
+    if gate.returncode != 0:
+        return fail(f"The gate failed after syncing with {base}. "
+                    f"See round-{job['round']}/merge-checks.md.\n\n{(gate.stdout or gate.stderr).strip()}")
+    try:
+        git(job, "push", "origin", job["branch"])
+        if github.pr_is_draft(job):
+            github.gh("pr", "ready", str(job["pr"]))
+        github.gh("pr", "merge", str(job["pr"]), f"--{config()['merge_method']}")
+    except Refused as e:
+        return fail(f"The merge failed:\n\n```\n{e}\n```")
+    # GitHub may already have deleted the branch on merge.
+    run(["git", "push", "origin", "--delete", job["branch"]], check=False)
+    save(advance(sync(job), "merged"))
+    print(f"{job['id']}: merged PR #{job['pr']}")
+
+
+def cmd_feedback(job, text):
+    require(job["stage"] == "needs-human", f"{job['id']} is in {job['stage']}, not needs-human")
+    require(text.strip(), "no feedback on stdin")
+    require_slot(job["id"])
+    d = job_dir(job["id"])
+    k = len(list(d.glob("feedback-*.md"))) + 1
+    (d / f"feedback-{k}.md").write_text(
+        f"# Feedback {k}\n\nFrom the operator after the job escalated.\n\n{text.strip()}\n")
+    # A job blocked at its spec was never built: its feedback goes to the spec-writer.
+    stage = "spec" if job["round"] == 0 else "build"
+    save(advance(sync(job), stage))
+    where = "back to the spec-writer" if stage == "spec" else f"round {job['round']}"
+    print(f"{job['id']}: feedback-{k}.md, {where}")
+
+
+def cmd_reject(job, text):
+    require(job["stage"] in WAITING | {"queued"},
+            f"{job['id']} is in {job['stage']}, not queued, needs-info or needs-human")
+    require(text.strip(), "no reason on stdin")
+    (job_dir(job["id"]) / "rejection.md").write_text(
+        f"REJECTED\n\nBy the operator while the job was {job['stage']}.\n\n{text.strip()}\n")
+    save(advance(sync(job), "rejected"))
+    print(f"{job['id']}: rejected")
+
+
+def cmd_answer(job, text):
+    require(job["stage"] == "needs-info", f"{job['id']} is in {job['stage']}, not needs-info")
+    require(text.strip(), "no answer on stdin")
+    require_slot(job["id"])
+    requests.append_answer(job, text)
+    save(advance(sync(job), "intake"))
+    print(f"{job['id']}: answer recorded, intake")
+
+
+def cmd_agents(job, spec):
+    require(job["stage"] == "intake" and (job["intake"] or {}).get("decision") == "ACCEPT",
+            f"{job['id']}: route only an intake job that intake ACCEPTed")
+    agents = json.loads(spec)
+    require(isinstance(agents.get("reviewers"), list) and agents["reviewers"],
+            'expected {"reviewers": ["code", ...]}')
+    job["agents"] = agents
+    save(job)
+
+
+def elapsed(job):
+    start = datetime.fromisoformat(job["started"].replace("Z", "+00:00"))
+    end = datetime.fromisoformat(job["ended"].replace("Z", "+00:00")) if job["ended"] else datetime.now(timezone.utc)
+    minutes = int((end - start).total_seconds() // 60)
+    return f"{minutes // 60}h{minutes % 60:02d}m" if minutes >= 60 else f"{minutes}m"
+
+
+def cmd_summary(args):
+    jobs = [resolve(a) for a in args] if args else all_jobs()
+    rows = [("job", "source", "stage", "round", "pr", "docs", "cost", "tokens", "time")]
+    for j in jobs:
+        sync(j)  # for display only; the orchestrator owns the saved state
+        source = j.get("source") or {}
+        origin = source.get("key") or source.get("provider") or "description"
+        rows.append((j["id"], origin, j["stage"], str(j["round"]),
+                     f"#{j['pr']}" if j["pr"] else "-", j.get("doc") or "-",
+                     f"${j['cost_usd']:.2f}", short_tokens(j.get("tokens", 0)), elapsed(j)))
+    widths = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
+    for r in rows:
+        print("  ".join(c.ljust(w) for c, w in zip(r, widths, strict=True)).rstrip())
+    print(f"total ${sum(j['cost_usd'] for j in jobs):.2f} API-equivalent for models priced in config.json, "
+          f"{short_tokens(sum(j.get('tokens', 0) for j in jobs))} tokens (Claude Code and Codex subagents)")
+
+
+def cmd_init(args):
+    require(args in ([], ["--no-labels"]), "usage: job init [--no-labels]")
+    report, ok = init()
+    print("\n".join(report))
+    if not ok:
+        sys.exit(1)
+
+
+def cmd_advance(arg, stage):
+    job = resolve(arg)
+    requests.ensure_request(job)
+    job = advance(sync(job), stage)
+    save(sync(job))
+    print(f"{job['id']}: {job['stage']} (round {job['round']})")
+
+
+def cmd_sync(arg):
+    job = sync(resolve(arg))
+    save(job)
+    reviews = " ".join(f"{k}:{v}" for k, v in job["reviews"].items())
+    print(f"{job['id']}: {job['stage']} round {job['round']} gate {job['gate'] or '-'} {reviews}".rstrip())
+
+
+def cmd_header(arg, role=None):
+    job = resolve(arg)
+    requests.ensure_request(job)
+    print(prompt_header(job, role))
+
+
+COMMANDS = {
+    ("init", None): lambda a: cmd_init(a),
+    ("queue", 0): lambda a: cmd_queue(),
+    ("create", None): cmd_create,
+    ("header", 1): lambda a: cmd_header(a[0]),
+    ("header", 2): lambda a: cmd_header(*a),
+    ("advance", 2): lambda a: cmd_advance(*a),
+    ("merge", 1): lambda a: cmd_merge(resolve(a[0])),
+    ("answer", 1): lambda a: cmd_answer(resolve(a[0]), sys.stdin.read()),
+    ("feedback", 1): lambda a: cmd_feedback(resolve(a[0]), sys.stdin.read()),
+    ("reject", 1): lambda a: cmd_reject(resolve(a[0]), sys.stdin.read()),
+    ("agents", 2): lambda a: cmd_agents(sync(resolve(a[0])), a[1]),
+    ("sync", 1): lambda a: cmd_sync(a[0]),
+    ("summary", None): lambda a: cmd_summary(a),
+}
+
+
+def main(argv):
+    if not argv or argv[0] in {"-h", "--help"}:
+        print(__doc__.strip())
+        return
+    cmd, args = argv[0], argv[1:]
+    handler = COMMANDS.get((cmd, None)) or COMMANDS.get((cmd, len(args)))
+    if not handler:
+        die("job", f"bad arguments: {' '.join(argv)}\n\n{__doc__.strip()}")
+    try:
+        if cmd in {"create", "queue", "advance", "answer", "feedback"}:
+            with dispatch_lock():
+                handler(args)
+        else:
+            handler(args)
+    except Refused as e:
+        die("job", str(e))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
