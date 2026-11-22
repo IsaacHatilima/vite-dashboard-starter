@@ -65,6 +65,9 @@ importers:
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
     devDependencies:
       '@eslint/js':
         specifier: ^10
@@ -94,8 +97,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5(vitest@5.0.5)
       domain-driver:
-        specifier: ^0.8.2
-        version: 0.8.2
+        specifier: ^0.12.0
+        version: 0.12.0
       eslint:
         specifier: ^10
         version: 10.13.0(jiti@2.7.0)
@@ -1311,8 +1314,8 @@ packages:
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
 
-  domain-driver@0.8.2:
-    resolution: {integrity: sha512-0agvr1VrDpBYFmPGjyhWuzPYjMAazcqbR3A3fA3PfY8P3Lj/mEdzvES3CVk7V/LbhvK0o9m2sBe35lSdVd3cDA==}
+  domain-driver@0.12.0:
+    resolution: {integrity: sha512-uULPiMZBeNLkknAGOMd/m9kn31NvITE3zb9WwaNuZ9qCYhxwnerBDnTWBE3b9Eky/5bK7/mQoNRBr2kprPfYKg==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -3832,7 +3835,7 @@ snapshots:
 
   dom-accessibility-api@0.6.3: {}
 
-  domain-driver@0.8.2:
+  domain-driver@0.12.0:
     dependencies:
       commander: 14.0.3
 

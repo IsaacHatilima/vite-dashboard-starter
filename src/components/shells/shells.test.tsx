@@ -152,7 +152,12 @@ describe.each(shells)("%s", (_, Shell) => {
     })
     trigger.focus()
     await user.keyboard("{Enter}")
-    await screen.findByRole("menuitemradio", { name: "Light" })
+    const menu = await screen.findByRole("menu")
+    // The menu moves focus to its first item after it opens. Keys pressed
+    // before that land on the trigger and shift every step by one.
+    await waitFor(() =>
+      expect(menu).toContainElement(document.activeElement as HTMLElement)
+    )
 
     await user.keyboard("{Home}{ArrowDown}{ArrowDown}{ArrowDown}")
     const dark = screen.getByRole("menuitemradio", { name: "Dark" })
@@ -315,10 +320,16 @@ describe("RailShell", () => {
 
     await user.keyboard("{Escape}")
 
-    expect(
-      screen.queryByRole("navigation", { name: "Team pages" })
-    ).not.toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Team" })).toHaveFocus()
+    // Base UI closes the card and returns focus asynchronously; under load
+    // that lands after the keypress resolves.
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("navigation", { name: "Team pages" })
+      ).not.toBeInTheDocument()
+    )
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Team" })).toHaveFocus()
+    )
   })
 
   it("navigates from the card and closes it", async () => {

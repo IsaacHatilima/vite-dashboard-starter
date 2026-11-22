@@ -388,12 +388,15 @@ toast.success("Changes saved")
 
 ## Adding features
 
-Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver); see
-`.agents/skills/javascript-domain-driver/SKILL.md`. For a nested feature such
-as another auth screen:
+Scaffold with [domain-driver](https://www.npmjs.com/package/domain-driver);
+`AGENTS.md` lists the commands. For a nested feature such as another auth
+screen:
 
 ```bash
 npx domain-driver --root src/features/auth make:feature two-factor-setup
 ```
 
-Add shadcn components with `pnpm dlx shadcn@latest add <name>`.
+Add shadcn components with `pnpm dlx shadcn@latest add <name>`. For a dialog
+that should become a bottom sheet on phones, use `ResponsiveDialog` from
+`src/components/ui/responsive-dialog.tsx`: the same parts render a `Dialog` from
+768px up and a `Drawer` that swipes down below it.
