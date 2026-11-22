@@ -86,7 +86,7 @@ describe("ResponsiveDialog", () => {
     phoneWidth(false)
     const dialog = await openAndClose()
 
-    expect(dialog).toHaveAttribute("data-slot", "dialog-content")
+    expect(dialog).toHaveAttribute("data-slot", "dialog-popup")
   })
 
   it("renders a bottom sheet that swipes down on a phone", async () => {

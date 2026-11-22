@@ -43,6 +43,7 @@ export function InsetNavMain({ sections }: InsetNavMainProps) {
               <SidebarMenuButton
                 tooltip={section.title}
                 isActive={sectionActive}
+                className="no-underline"
                 render={<Link to={section.url} />}
               >
                 <section.icon />
@@ -50,10 +51,10 @@ export function InsetNavMain({ sections }: InsetNavMainProps) {
               </SidebarMenuButton>
               <CollapsibleTrigger
                 render={
-                  <SidebarMenuAction className="aria-expanded:rotate-90" />
+                  <SidebarMenuAction className="aria-expanded:[&>svg]:rotate-90" />
                 }
               >
-                <ChevronRightIcon />
+                <ChevronRightIcon className="transition-transform" />
                 <span className="sr-only">Toggle {section.title}</span>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -64,6 +65,7 @@ export function InsetNavMain({ sections }: InsetNavMainProps) {
                       <SidebarMenuSubItem key={item.url}>
                         <SidebarMenuSubButton
                           isActive={itemActive}
+                          className="no-underline"
                           render={
                             <Link
                               to={item.url}

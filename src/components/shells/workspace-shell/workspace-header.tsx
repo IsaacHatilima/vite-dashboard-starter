@@ -34,7 +34,7 @@ export function WorkspaceHeader({
             <>
               <BreadcrumbItem className="hidden min-w-0 md:inline-flex">
                 <BreadcrumbLink
-                  className="truncate"
+                  className="truncate no-underline"
                   render={<Link to={section.url} />}
                 >
                   {section.title}

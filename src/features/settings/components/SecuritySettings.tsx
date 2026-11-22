@@ -63,7 +63,11 @@ export default function SecuritySettings() {
             <p className="min-w-0 flex-1 text-xs text-muted-foreground">
               Password changes are unavailable in this preview.
             </p>
-            <Button type="submit" disabled>
+            <Button
+              type="submit"
+              className="[--primary:var(--foreground)]"
+              disabled
+            >
               Update password
             </Button>
           </CardFooter>

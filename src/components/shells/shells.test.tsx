@@ -1,8 +1,14 @@
-import { render, screen, waitFor, within } from "@testing-library/react"
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import type * as React from "react"
 import { createMemoryRouter, RouterProvider } from "react-router"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -411,6 +417,360 @@ describe("RailShell", () => {
     expect(
       screen.queryByRole("navigation", { name: "Projects pages" })
     ).toBeNull()
+  })
+})
+
+describe("RailShell command search", () => {
+  const scrollIntoViewDescriptor = Object.getOwnPropertyDescriptor(
+    Element.prototype,
+    "scrollIntoView"
+  )
+
+  beforeEach(() => {
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        observe = vi.fn()
+        unobserve = vi.fn()
+        disconnect = vi.fn()
+      }
+    )
+    Object.defineProperty(Element.prototype, "scrollIntoView", {
+      configurable: true,
+      value: vi.fn(),
+    })
+  })
+
+  afterEach(() => {
+    if (scrollIntoViewDescriptor) {
+      Object.defineProperty(
+        Element.prototype,
+        "scrollIntoView",
+        scrollIntoViewDescriptor
+      )
+    } else {
+      Reflect.deleteProperty(Element.prototype, "scrollIntoView")
+    }
+  })
+
+  it.each([
+    ["Meta", "expanded", "k"],
+    ["Meta", "collapsed", "K"],
+    ["Control", "expanded", "K"],
+    ["Control", "collapsed", "k"],
+  ] as const)(
+    "toggles search with %s+K in the %s rail, including while typing",
+    async (modifier, mode, key) => {
+      const { router, user } = renderShell(RailShell, "/dashboard")
+      if (mode === "collapsed") {
+        await user.click(screen.getByRole("button", { name: "Toggle sidebar" }))
+        await user.click(screen.getByRole("button", { name: "Team" }))
+        expect(
+          screen.getByRole("navigation", { name: "Team pages" })
+        ).toBeVisible()
+      }
+      const search = screen.getByRole("button", { name: "Search commands" })
+      await user.keyboard("k")
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+      const shortcut = new KeyboardEvent("keydown", {
+        key,
+        metaKey: modifier === "Meta",
+        ctrlKey: modifier === "Control",
+        bubbles: true,
+        cancelable: true,
+      })
+      fireEvent(window, shortcut)
+      expect(shortcut.defaultPrevented).toBe(true)
+      const input = within(
+        await screen.findByRole("dialog", { name: "Search commands" })
+      ).getByRole("combobox", { name: "Search workspace commands" })
+      await waitFor(() => expect(input).toHaveFocus())
+      expect(search).toHaveAttribute("aria-keyshortcuts", "Meta+K Control+K")
+      if (mode === "collapsed") {
+        expect(
+          screen.queryByRole("navigation", {
+            name: "Team pages",
+            hidden: true,
+          })
+        ).not.toBeInTheDocument()
+      }
+
+      await user.type(input, "archived")
+      await user.keyboard(`{${modifier}>}k{/${modifier}}`)
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      )
+      await user.keyboard(`{${modifier}>}k{/${modifier}}`)
+      const reopened = within(
+        await screen.findByRole("dialog", { name: "Search commands" })
+      ).getByRole("combobox", { name: "Search workspace commands" })
+      expect(reopened).toHaveValue("")
+      await waitFor(() => expect(reopened).toHaveFocus())
+      await user.keyboard("{Escape}")
+      await waitFor(() =>
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      )
+      expect(router.state.location.pathname).toBe("/dashboard")
+    }
+  )
+
+  it.each(["expanded", "collapsed"])(
+    "places search above Dashboard in the %s rail and restores focus after dismissal",
+    async (mode) => {
+      const { router, user } = renderShell(RailShell, "/dashboard")
+      if (mode === "collapsed") {
+        await user.click(screen.getByRole("button", { name: "Toggle sidebar" }))
+      }
+      const search = screen.getByRole("button", { name: "Search commands" })
+      const dashboard = screen.getByRole("button", { name: "Dashboard" })
+      expect(
+        search.compareDocumentPosition(dashboard) &
+          Node.DOCUMENT_POSITION_FOLLOWING
+      ).not.toBe(0)
+
+      await user.click(search)
+      const dialog = await screen.findByRole("dialog", {
+        name: "Search commands",
+      })
+      expect(dialog).toHaveClass("top-[12svh]", "translate-y-0")
+      const input = within(dialog).getByRole("combobox", {
+        name: "Search workspace commands",
+      })
+      expect(input).toHaveAttribute("data-slot", "command-input")
+      expect(input.closest('[data-slot="command"]')).toBeInTheDocument()
+      expect(within(dialog).getByRole("listbox")).toHaveAttribute(
+        "data-slot",
+        "command-list"
+      )
+      expect(
+        within(dialog)
+          .getByRole("group", { name: "Projects" })
+          .closest('[data-slot="command-group"]')
+      ).toBeInTheDocument()
+      expect(
+        within(dialog).getByRole("option", { name: "Archived" })
+      ).toHaveAttribute("data-slot", "command-item")
+      await waitFor(() =>
+        expect(
+          within(dialog).getByRole("combobox", {
+            name: "Search workspace commands",
+          })
+        ).toHaveFocus()
+      )
+
+      await user.keyboard("{Escape}")
+      await waitFor(() =>
+        expect(
+          screen.queryByRole("dialog", { name: "Search commands" })
+        ).not.toBeInTheDocument()
+      )
+      await waitFor(() => expect(search).toHaveFocus())
+      expect(router.state.location.pathname).toBe("/dashboard")
+
+      await user.click(search)
+      const reopened = await screen.findByRole("dialog", {
+        name: "Search commands",
+      })
+      await user.click(
+        within(reopened).getByRole("button", { name: "Close search" })
+      )
+      await waitFor(() =>
+        expect(
+          screen.queryByRole("dialog", { name: "Search commands" })
+        ).not.toBeInTheDocument()
+      )
+      await waitFor(() => expect(search).toHaveFocus())
+    }
+  )
+
+  it("filters pages, runs a keyboard-selected result, and clears the next query", async () => {
+    const { router, user } = renderShell(RailShell, "/dashboard")
+    await user.keyboard("{Control>}k{/Control}")
+    const dialog = await screen.findByRole("dialog", {
+      name: "Search commands",
+    })
+    const input = within(dialog).getByRole("combobox", {
+      name: "Search workspace commands",
+    })
+
+    await user.type(input, "projects")
+    const archived = within(dialog).getByRole("option", { name: "Archived" })
+    expect(within(dialog).getAllByRole("option")).toHaveLength(2)
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole("option", { name: "All projects" })
+      ).toHaveAttribute("aria-selected", "true")
+    )
+    await user.keyboard("{ArrowDown}")
+    await waitFor(() =>
+      expect(archived).toHaveAttribute("aria-selected", "true")
+    )
+    await user.keyboard("{Enter}")
+
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe("/projects/archived")
+    )
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Search commands" })
+      ).not.toBeInTheDocument()
+    )
+
+    await user.keyboard("{Meta>}k{/Meta}")
+    expect(
+      within(screen.getByRole("dialog", { name: "Search commands" })).getByRole(
+        "combobox",
+        { name: "Search workspace commands" }
+      )
+    ).toHaveValue("")
+  })
+
+  it("opens search from a closed mobile sidebar and keeps the sidebar on Escape", async () => {
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      matches: query === "(max-width: 767px)",
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }))
+    const { user } = renderShell(RailShell, "/dashboard")
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+
+    await user.keyboard("{Control>}k{/Control}")
+    const input = within(
+      await screen.findByRole("dialog", { name: "Search commands" })
+    ).getByRole("combobox", { name: "Search workspace commands" })
+    await waitFor(() => expect(input).toHaveFocus())
+    await user.keyboard("{Escape}")
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Search commands" })
+      ).not.toBeInTheDocument()
+    )
+    const sidebar = screen.getByRole("dialog", { name: "Sidebar" })
+    expect(sidebar).toBeVisible()
+    await user.click(
+      within(sidebar).getByRole("button", { name: "Search commands" })
+    )
+    expect(
+      await screen.findByRole("dialog", { name: "Search commands" })
+    ).toBeVisible()
+  })
+
+  it("includes settings pages and explains an empty result", async () => {
+    const { user } = renderShell(RailShell, "/dashboard")
+    await user.click(screen.getByRole("button", { name: "Search commands" }))
+    const dialog = await screen.findByRole("dialog", {
+      name: "Search commands",
+    })
+    const input = within(dialog).getByRole("combobox", {
+      name: "Search workspace commands",
+    })
+
+    await user.type(input, "settings")
+    expect(
+      within(dialog).getByRole("option", { name: "Preferences" })
+    ).toBeVisible()
+    expect(
+      within(dialog).getByRole("option", { name: "Keyboard shortcuts" })
+    ).toBeVisible()
+
+    await user.clear(input)
+    await user.type(input, "no-such-command")
+    expect(within(dialog).queryByRole("option")).not.toBeInTheDocument()
+    expect(within(dialog).getByText("No commands found.")).toBeVisible()
+  })
+
+  it("returns to the mobile sidebar on Escape and closes navigation after selection", async () => {
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      matches: query === "(max-width: 767px)",
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }))
+    const { router, user } = renderShell(RailShell, "/dashboard")
+    const sidebarToggle = screen.getByRole("button", {
+      name: /Toggle sidebar/i,
+    })
+    await user.click(sidebarToggle)
+    const sidebar = await screen.findByRole("dialog", { name: "Sidebar" })
+    const search = within(sidebar).getByRole("button", {
+      name: "Search commands",
+    })
+
+    await user.click(search)
+    await screen.findByRole("dialog", { name: "Search commands" })
+    await user.keyboard("{Escape}")
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Search commands" })
+      ).not.toBeInTheDocument()
+    )
+    expect(screen.getByRole("dialog", { name: "Sidebar" })).toBeVisible()
+    await waitFor(() => expect(search).toHaveFocus())
+
+    await user.click(search)
+    const dialog = await screen.findByRole("dialog", {
+      name: "Search commands",
+    })
+    await user.type(
+      within(dialog).getByRole("combobox", {
+        name: "Search workspace commands",
+      }),
+      "archived"
+    )
+    await user.click(within(dialog).getByRole("option", { name: "Archived" }))
+
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe("/projects/archived")
+    )
+    await waitFor(() => expect(screen.queryAllByRole("dialog")).toHaveLength(0))
+    await waitFor(() => expect(sidebarToggle).toHaveFocus())
+  })
+
+  it("closes the mobile sidebar when selecting the current page", async () => {
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      matches: query === "(max-width: 767px)",
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }))
+    const { router, user } = renderShell(RailShell, "/dashboard")
+    const sidebarToggle = screen.getByRole("button", {
+      name: /Toggle sidebar/i,
+    })
+    await user.click(sidebarToggle)
+    const sidebar = await screen.findByRole("dialog", { name: "Sidebar" })
+    await user.click(
+      within(sidebar).getByRole("button", { name: "Search commands" })
+    )
+    const dialog = await screen.findByRole("dialog", {
+      name: "Search commands",
+    })
+    await user.type(
+      within(dialog).getByRole("combobox", {
+        name: "Search workspace commands",
+      }),
+      "overview"
+    )
+    await user.click(within(dialog).getByRole("option", { name: "Overview" }))
+
+    expect(router.state.location.pathname).toBe("/dashboard")
+    await waitFor(() => expect(screen.queryAllByRole("dialog")).toHaveLength(0))
+    await waitFor(() => expect(sidebarToggle).toHaveFocus())
   })
 })
 

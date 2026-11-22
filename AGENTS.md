@@ -22,3 +22,11 @@ React 19, TypeScript, Vite, react-router, and shadcn/ui on Base UI. `README.md` 
 ## Agent skills
 
 The agent skills and the factory aren't kept in this repository. Install them from [IsaacHatilima/skills](https://github.com/IsaacHatilima/skills): `install web` for your account, or `install web --project .`, which adds its own section to this file.
+
+## Using ui-sdk
+
+Before using ui-sdk, follow the ui-sdk skill if it is installed, and read
+`node_modules/@ui-sdk/react/docs/llms.txt`.
+
+To build a new component, also search `node_modules/@ui-sdk/react/docs/core.md`
+by heading, and read `node_modules/@ui-sdk/react/docs/rendering.md` next to it.

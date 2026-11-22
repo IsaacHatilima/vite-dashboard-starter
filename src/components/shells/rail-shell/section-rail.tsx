@@ -1,5 +1,6 @@
 import { cn } from "cn"
 import { Fragment } from "react"
+import { SearchIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +18,8 @@ interface SectionRailProps {
   // Section showing in the floating card while collapsed, if any.
   peeked: NavSection | null
   collapsed: boolean
+  searchOpen: boolean
+  onSearch: () => void
   onSelect: (section: NavSection) => void
   onHover: (section: NavSection) => void
   onSettingsNavigate: () => void
@@ -29,12 +32,33 @@ export function SectionRail({
   selected,
   peeked,
   collapsed,
+  searchOpen,
+  onSearch,
   onSelect,
   onHover,
   onSettingsNavigate,
 }: SectionRailProps) {
   return (
     <div className="flex w-(--sidebar-width-icon) shrink-0 flex-col items-center py-2">
+      <Tooltip disabled={searchOpen}>
+        <TooltipTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              aria-haspopup="dialog"
+              aria-expanded={searchOpen}
+              aria-keyshortcuts="Meta+K Control+K"
+              className="mb-3 text-sidebar-muted-foreground"
+              onClick={onSearch}
+            />
+          }
+        >
+          <SearchIcon strokeWidth={ICON_STROKE_WIDTH} className="size-4" />
+          <span className="sr-only">Search commands</span>
+        </TooltipTrigger>
+        <TooltipContent side="right">Search commands</TooltipContent>
+      </Tooltip>
       <div
         role="group"
         aria-label="Sections"

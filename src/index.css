@@ -1,4 +1,6 @@
+@layer ui-sdk;
 @import "tailwindcss";
+@import "@ui-sdk/core/web.css" layer(components);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
@@ -92,15 +94,17 @@
   --app-page-top: 28px;
   --field-gap: 14px;
   --icon-stroke-width: 1.8;
-  /* Dashboard pages and RailShell's icon rail share the canvas.
-     Sidebar navigation keeps its own surface. */
   color-scheme: light;
-  --background: #fcfcfc;
+  --background: #fcfcfd;
   --dashboard-background: var(--background);
   --foreground: #0d0d0d;
-  --card: var(--background);
-  --stacked-card: var(--secondary);
-  --overlay-stack-background: var(--secondary);
+  --card: #ffffff;
+  --standalone-card-background: var(--card);
+  --borderless-card-shadow:
+    inset 0 0 0 1px #f3f3f5, 0 1px 2px rgb(0 0 0 / 3%),
+    0 4px 12px -4px rgb(0 0 0 / 5%);
+  --stacked-card: #f8f9f9;
+  --overlay-stack-background: var(--stacked-card);
   --stacked-card-shadow:
     0 2px 4px -1px rgb(0 0 0 / 5%), 0 6px 12px -6px rgb(0 0 0 / 12%);
   --dialog-overlay: rgb(0 0 0 / 30%);
@@ -130,10 +134,10 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: #f9f9f9;
+  --sidebar: #fbfbfa;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--background);
-  --sidebar-rail: var(--dashboard-background);
+  --sidebar-rail: var(--sidebar);
   --sidebar-foreground: rgb(13 13 13 / 85%);
   /* Sidebar icons, a step quieter than muted text. */
   --sidebar-muted-foreground: #8f8f8f;
@@ -150,12 +154,14 @@
 
 .dark {
   color-scheme: dark;
-  --background: #151515;
+  --background: #0b0b0a;
   --dashboard-background: var(--background);
   --foreground: #ededed;
-  --card: #1c1c1c;
-  --stacked-card: var(--secondary);
-  --overlay-stack-background: var(--secondary);
+  --card: var(--background);
+  --standalone-card-background: var(--stacked-card);
+  --borderless-card-shadow: none;
+  --stacked-card: #131312;
+  --overlay-stack-background: var(--stacked-card);
   --stacked-card-shadow:
     0 0 0 1px rgb(255 255 255 / 4%), 0 2px 4px rgb(0 0 0 / 20%),
     0 6px 12px -6px rgb(0 0 0 / 40%);
@@ -185,10 +191,10 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: var(--background);
+  --sidebar: #171717;
   --sidebar-panel: var(--background);
   --sidebar-panel-floating: var(--popover);
-  --sidebar-rail: var(--dashboard-background);
+  --sidebar-rail: var(--sidebar);
   --sidebar-foreground: rgb(237 237 237 / 85%);
   --sidebar-muted-foreground: var(--muted-foreground);
   --sidebar-primary: #ededed;
@@ -245,5 +251,45 @@
 @media (max-width: 640px) {
   :root {
     --app-header-height: 50px;
+  }
+}
+
+:root {
+  --edge-outer: inset 0 0 0 1px rgb(0 0 0 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(0 0 0 / 0.03);
+  --edge-inner: inset 0 0 0 1px rgb(0 0 0 / 0.06), inset 0 1px 2px rgb(0 0 0 / 0.04);
+  --edge-tile: inset 0 0 0 1px rgb(0 0 0 / 0.04), inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+
+.dark {
+  --edge-outer: inset 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.09);
+  --edge-inner: inset 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 2px rgb(0 0 0 / 0.5);
+  --edge-tile: inset 0 0 0 1px rgb(255 255 255 / 0.04), inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+@utility edge-outer {
+  box-shadow: var(--edge-outer);
+}
+@utility edge-inner {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow: var(--edge-inner);
+  }
+}
+@utility edge-tile {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow: var(--edge-tile);
   }
 }

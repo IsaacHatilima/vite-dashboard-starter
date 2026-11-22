@@ -22,4 +22,10 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  {
+    files: ['src/components/uibrik/file-card/file-card.tsx'],
+    linterOptions: {
+      noInlineConfig: true,
+    },
+  },
 ])

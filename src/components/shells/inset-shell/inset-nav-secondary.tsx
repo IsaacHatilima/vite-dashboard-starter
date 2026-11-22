@@ -23,7 +23,11 @@ export function InsetNavSecondary({ links, ...props }: InsetNavSecondaryProps) {
         <SidebarMenu>
           {links.map((link) => (
             <SidebarMenuItem key={link.title}>
-              <SidebarMenuButton size="sm" render={<a href={link.url} />}>
+              <SidebarMenuButton
+                size="sm"
+                className="no-underline"
+                render={<a href={link.url} />}
+              >
                 <link.icon />
                 <span>{link.title}</span>
               </SidebarMenuButton>

@@ -27,7 +27,7 @@ export function ClassicSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <ShellBrand />
+        <ShellBrand showTagline={false} className="no-underline" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -35,6 +35,7 @@ export function ClassicSidebar() {
             {mainNavigation.map((section) => (
               <SidebarMenuItem key={section.title}>
                 <SidebarMenuButton
+                  className="no-underline"
                   render={<Link to={section.url} className="font-medium" />}
                 >
                   {section.title}
@@ -46,6 +47,7 @@ export function ClassicSidebar() {
                       <SidebarMenuSubItem key={item.url}>
                         <SidebarMenuSubButton
                           isActive={itemActive}
+                          className="no-underline"
                           render={
                             <Link
                               to={item.url}

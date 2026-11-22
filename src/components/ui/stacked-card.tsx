@@ -36,7 +36,7 @@ function StackedCard({
       <div
         data-slot="stacked-card"
         className={cn(
-          "isolate flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card text-card-foreground ring-1 ring-foreground/5",
+          "isolate flex h-full min-w-0 flex-col rounded-2xl bg-stacked-card p-1.5 text-card-foreground ring-1 ring-foreground/5",
           className
         )}
         {...props}
@@ -55,7 +55,7 @@ function StackHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="stack-header"
       className={cn(
-        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-1.5 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
+        "flex min-h-11 min-w-0 shrink-0 flex-wrap items-center gap-3 pl-3 pr-1 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
         className
       )}
       {...props}
@@ -91,7 +91,7 @@ function StackFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="stack-footer"
       className={cn(
-        "flex min-h-10 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 py-1.5 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
+        "flex min-h-9 min-w-0 shrink-0 flex-wrap items-center gap-2 px-3 pt-2.5 pb-1.5 text-[length:var(--font-size-control)] leading-[1.45] wrap-anywhere text-muted-foreground [&>*]:min-w-0",
         className
       )}
       {...props}
