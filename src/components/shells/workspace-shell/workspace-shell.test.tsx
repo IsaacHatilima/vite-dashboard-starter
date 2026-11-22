@@ -1,4 +1,10 @@
-import { render, screen, waitFor, within } from "@testing-library/react"
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import type { ReactNode } from "react"
 import { createMemoryRouter, RouterProvider } from "react-router"
@@ -165,6 +171,44 @@ describe("WorkspaceShell refinement", () => {
       screen.queryByRole("dialog", { name: "Search pages" })
     ).not.toBeInTheDocument()
   })
+
+  it.each([
+    { composition: "native IME composition", isComposing: true, keyCode: 13 },
+    {
+      composition: "Safari's IME fallback",
+      isComposing: false,
+      keyCode: 229,
+    },
+  ])(
+    "keeps Enter in the header during $composition",
+    async ({ isComposing, keyCode }) => {
+      const { user } = renderWorkspace()
+      const headerInput = screen.getByRole("textbox", { name: "Search pages" })
+      await user.click(headerInput)
+      await user.type(headerInput, "日本語")
+
+      fireEvent.keyDown(headerInput, {
+        key: "Enter",
+        code: "Enter",
+        isComposing,
+        keyCode,
+      })
+
+      expect(headerInput).toHaveFocus()
+      expect(headerInput).toHaveValue("日本語")
+      expect(
+        screen.queryByRole("dialog", { name: "Search pages" })
+      ).not.toBeInTheDocument()
+
+      await user.keyboard("{Enter}")
+      const dialog = await screen.findByRole("dialog", { name: "Search pages" })
+      const dialogInput = within(dialog).getByRole("combobox", {
+        name: "Search workspace pages",
+      })
+      expect(dialogInput).toHaveValue("日本語")
+      await waitFor(() => expect(dialogInput).toHaveFocus())
+    }
+  )
 })
 
 describe("WorkspaceShell page search", () => {

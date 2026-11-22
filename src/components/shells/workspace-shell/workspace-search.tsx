@@ -43,7 +43,11 @@ export function WorkspaceSearch() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === "Enter") {
+            if (
+              event.key === "Enter" &&
+              !event.nativeEvent.isComposing &&
+              event.nativeEvent.keyCode !== 229
+            ) {
               event.preventDefault()
               changeOpen(true)
             }
